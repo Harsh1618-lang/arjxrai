@@ -59,8 +59,15 @@ function mergeSettings(rows: SettingRow[]): SiteSettings {
 
 export const settingsApi = {
   async get(): Promise<SiteSettings> {
-    const rows = await db.list<SettingRow>("settings");
-    return mergeSettings(rows);
+    try {
+      const rows = await db.list<SettingRow>("settings");
+      return mergeSettings(rows);
+    } catch (err) {
+      // Never let a settings fetch failure blank the whole site — fall back to
+      // defaults and surface the real error in the console for debugging.
+      console.error("[settingsApi.get] failed, falling back to defaults:", err);
+      return mergeSettings([]);
+    }
   },
   async save<K extends SettingsSection>(section: K, value: SiteSettings[K]): Promise<void> {
     await db.upsert<SettingRow & Record<string, unknown>>("settings", { key: section, value }, "key");
