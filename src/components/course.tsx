@@ -9,11 +9,17 @@ import type { CourseWithMeta, Lesson, VideoType } from "@/types";
 /* ──────────────────────── Lesson type badge ──────────────────────── */
 
 export function LessonTypeBadge({ type }: { type: VideoType }) {
-  const isTelegram = type === "telegram";
+  const meta: Record<VideoType, { label: string; color: string }> = {
+    telegram: { label: "Telegram", color: "#229ED9" },
+    youtube: { label: "YouTube", color: "#FF0000" },
+    gdrive: { label: "Google Drive", color: "#0F9D58" },
+    direct: { label: "Video file", color: "#7C3AED" },
+  };
+  const { label, color } = meta[type] ?? meta.youtube;
   return (
-    <Badge color={isTelegram ? "#229ED9" : "#FF0000"}>
-      {isTelegram ? <TelegramIcon className="h-3 w-3" /> : <Video className="h-3 w-3" />}
-      {isTelegram ? "Telegram" : "YouTube"}
+    <Badge color={color}>
+      {type === "telegram" ? <TelegramIcon className="h-3 w-3" /> : <Video className="h-3 w-3" />}
+      {label}
     </Badge>
   );
 }
@@ -184,6 +190,14 @@ export function VideoPlayer({ lesson, locked }: { lesson: Lesson | null; locked?
           className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-400 transition hover:bg-sky-500/20">
           Watch on Telegram <ExternalLink className="h-3.5 w-3.5" />
         </a>
+      </div>
+    );
+  }
+
+  if (parsed.type === "direct") {
+    return (
+      <div className="overflow-hidden rounded-2xl border border-[#1a1a1a] bg-black aspect-video">
+        <video src={lesson.video_url} controls playsInline className="h-full w-full" title={lesson.title} />
       </div>
     );
   }

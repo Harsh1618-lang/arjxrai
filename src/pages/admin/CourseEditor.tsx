@@ -325,7 +325,7 @@ function LessonsPanel({ courseId, items }: { courseId: string; items: Lesson[] }
         footer={
           <>
             <Button variant="outline" onClick={() => crud.setEditing(null)}>Cancel</Button>
-            <Button loading={crud.busy} onClick={() => crud.submit(() => (!e?.title?.trim() ? "Title is required" : !e.video_url || parseVideo(e.video_url).type === "unknown" ? "Enter a valid YouTube or Telegram (t.me/channel/123) link" : null))}>
+            <Button loading={crud.busy} onClick={() => crud.submit(() => (!e?.title?.trim() ? "Title is required" : !e.video_url || parseVideo(e.video_url).type === "unknown" ? "Enter a valid YouTube, Telegram, Google Drive, or direct video file (.mp4) link" : null))}>
               Save lesson
             </Button>
           </>
@@ -340,13 +340,20 @@ function LessonsPanel({ courseId, items }: { courseId: string; items: Lesson[] }
               onChange={(ev) => {
                 const url = ev.target.value;
                 const p = parseVideo(url);
-                crud.setEditing({ ...e, video_url: url, video_type: p.type === "telegram" ? "telegram" : "youtube" });
+                const video_type = p.type === "unknown" ? "youtube" : p.type;
+                crud.setEditing({ ...e, video_url: url, video_type });
               }}
-              placeholder="https://youtube.com/watch?v=… or https://t.me/channel/123"
-              hint={parsed?.type === "youtube" ? `✓ YouTube video ${parsed.id}` : parsed?.type === "telegram" ? `✓ Telegram post ${parsed.channel}/${parsed.post}` : "Paste a YouTube link or a public Telegram post link."}
+              placeholder="YouTube, Telegram, Google Drive share link, or a direct .mp4 (Cloudinary/ImageKit) URL"
+              hint={
+                parsed?.type === "youtube" ? `✓ YouTube video ${parsed.id}` :
+                parsed?.type === "telegram" ? `✓ Telegram post ${parsed.channel}/${parsed.post}` :
+                parsed?.type === "gdrive" ? `✓ Google Drive file ${parsed.id}` :
+                parsed?.type === "direct" ? "✓ Direct video file (Cloudinary / ImageKit / other)" :
+                "Paste a YouTube, Telegram, Google Drive, or direct video file link."
+              }
             />
             <div className="grid grid-cols-2 gap-4">
-              <Select label="Source" value={e.video_type ?? "youtube"} onChange={(ev) => crud.setEditing({ ...e, video_type: ev.target.value as Lesson["video_type"] })} options={[{ value: "youtube", label: "YouTube" }, { value: "telegram", label: "Telegram" }]} />
+              <Select label="Source" value={e.video_type ?? "youtube"} onChange={(ev) => crud.setEditing({ ...e, video_type: ev.target.value as Lesson["video_type"] })} options={[{ value: "youtube", label: "YouTube" }, { value: "telegram", label: "Telegram" }, { value: "gdrive", label: "Google Drive" }, { value: "direct", label: "Direct file (Cloudinary/ImageKit)" }]} />
               <Input label="Duration" value={e.duration ?? ""} onChange={(ev) => crud.setEditing({ ...e, duration: ev.target.value })} placeholder="1h 20m" />
             </div>
             <Textarea label="Description" rows={3} value={e.description ?? ""} onChange={(ev) => crud.setEditing({ ...e, description: ev.target.value })} />

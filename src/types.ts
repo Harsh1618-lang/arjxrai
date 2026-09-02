@@ -1,6 +1,6 @@
 export type Role = "admin" | "student";
 export type CourseStatus = "published" | "draft";
-export type VideoType = "youtube" | "telegram";
+export type VideoType = "youtube" | "telegram" | "gdrive" | "direct";
 export type ResourceType = "zip" | "notes" | "image" | "document" | "link" | "telegram";
 export type MediaType = "image" | "logo" | "banner" | "thumbnail" | "telegram";
 export type ThemeMode = "light" | "dark" | "system";

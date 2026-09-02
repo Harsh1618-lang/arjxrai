@@ -62,6 +62,8 @@ export function isExternal(url: string): boolean {
 export type ParsedVideo =
   | { type: "youtube"; id: string }
   | { type: "telegram"; channel: string; post: string }
+  | { type: "gdrive"; id: string }
+  | { type: "direct"; url: string }
   | { type: "unknown" };
 
 export function parseVideo(url: string): ParsedVideo {
@@ -73,6 +75,9 @@ export function parseVideo(url: string): ParsedVideo {
   if (yt) return { type: "youtube", id: yt[1] };
   const tg = trimmed.match(/t\.me\/(?:s\/)?([A-Za-z0-9_]+)\/(\d+)/);
   if (tg) return { type: "telegram", channel: tg[1], post: tg[2] };
+  const gd = trimmed.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/) || trimmed.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([A-Za-z0-9_-]+)/);
+  if (gd) return { type: "gdrive", id: gd[1] };
+  if (/^https?:\/\/\S+\.(mp4|webm|ogg|ogv|mov|m3u8)(\?\S*)?$/i.test(trimmed)) return { type: "direct", url: trimmed };
   return { type: "unknown" };
 }
 
@@ -83,6 +88,9 @@ export function getEmbedUrl(url: string): string | null {
   }
   if (parsed.type === "telegram") {
     return `https://t.me/${parsed.channel}/${parsed.post}?embed=1&mode=tme`;
+  }
+  if (parsed.type === "gdrive") {
+    return `https://drive.google.com/file/d/${parsed.id}/preview`;
   }
   return null;
 }
