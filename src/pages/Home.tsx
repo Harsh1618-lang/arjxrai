@@ -97,7 +97,7 @@ export default function Home() {
           </div>
 
           {hero.image && (
-            <div className="relative hidden animate-fade-in lg:block">
+            <div className="relative order-first animate-fade-in lg:order-none">
               <div className="absolute -inset-8 -z-10 rounded-[2.5rem] bg-primary/8 blur-3xl" />
               <img
                 src={hero.image}
