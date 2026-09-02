@@ -295,13 +295,13 @@ function FileRow({ icon: Icon, title, subtitle, url, locked, telegram }: { icon:
   );
   if (locked) {
     return (
-      <Link to="/login" className="flex w-full items-center gap-3 rounded-lg p-2.5 text-left opacity-80 transition hover:bg-zinc-50 dark:hover:bg-zinc-800" title="Log in to access">
+      <Link to="/login" className="flex w-full items-center gap-3 overflow-hidden rounded-lg p-2.5 text-left opacity-80 transition hover:bg-zinc-50 dark:hover:bg-zinc-800" title="Log in to access">
         {inner}
       </Link>
     );
   }
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" className="flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition hover:bg-zinc-50 dark:hover:bg-zinc-800">
+    <a href={url} target="_blank" rel="noopener noreferrer" className="flex w-full items-center gap-3 overflow-hidden rounded-lg p-2.5 text-left transition hover:bg-zinc-50 dark:hover:bg-zinc-800">
       {inner}
     </a>
   );
@@ -328,4 +328,3 @@ function DetailSkeleton() {
     </div>
   );
 }
-

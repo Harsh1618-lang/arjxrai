@@ -245,7 +245,7 @@ export function Tabs<T extends string>({ tabs, value, onChange, className }: { t
           aria-selected={value === t.value}
           onClick={() => onChange(t.value)}
           className={cn(
-            "flex-1 whitespace-nowrap rounded-[calc(var(--radius)-4px)] px-3 py-2 text-sm font-medium transition-all",
+            "min-w-0 flex-1 whitespace-nowrap rounded-[calc(var(--radius)-4px)] px-3 py-2 text-sm font-medium transition-all",
             value === t.value
               ? "bg-white text-zinc-900 shadow-sm dark:bg-[#1a1a1a] dark:text-white"
               : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-300",

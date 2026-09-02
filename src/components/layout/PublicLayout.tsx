@@ -3,7 +3,6 @@ import { Link, Outlet } from "react-router-dom";
 import { Construction, Megaphone, X } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { BottomNav } from "@/components/layout/BottomNav";
-import { MobileAuthBar } from "@/components/MobileAuthBar";
 import { Footer } from "@/components/layout/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { InstallPrompt, OfflineBanner, ScrollToTop } from "@/components/common";
@@ -70,7 +69,7 @@ export function PublicLayout() {
   const maintenance = settings?.general.maintenance_mode ?? false;
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-zinc-900 dark:bg-black dark:text-zinc-100">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-white text-zinc-900 dark:bg-black dark:text-zinc-100">
       <ScrollToTop />
       <OfflineBanner />
       <AnnouncementBar />
@@ -96,7 +95,6 @@ export function PublicLayout() {
       <div className="hidden md:block">
         <Footer />
       </div>
-      <MobileAuthBar />
       <BottomNav />
       <InstallPrompt />
     </div>
