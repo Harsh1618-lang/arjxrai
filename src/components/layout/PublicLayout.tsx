@@ -3,6 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 import { Construction, Megaphone, X } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { BottomNav } from "@/components/layout/BottomNav";
+import { MobileAuthBar } from "@/components/MobileAuthBar";
 import { Footer } from "@/components/layout/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { InstallPrompt, OfflineBanner, ScrollToTop } from "@/components/common";
