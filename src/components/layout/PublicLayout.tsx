@@ -130,20 +130,22 @@ export function PublicLayout() {
     <div className="relative isolate flex min-h-screen flex-col bg-white pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 md:pb-0">
       <AmbientBackground />
       <ScrollToTop />
-      <OfflineBanner />
-      <div className={cn("overflow-hidden transition-all duration-300 ease-out", bannerCollapsed ? "max-h-0 opacity-0" : "max-h-16 opacity-100")}>
-        <TopBanner />
-      </div>
       <Navbar />
-      {maintenance && isAdmin && (
-        <div className="flex items-center justify-center gap-2 bg-amber-500 px-4 py-1.5 text-center text-xs font-medium text-white">
-          <Construction className="h-3.5 w-3.5" /> Maintenance mode is ON — visitors see the maintenance screen.
-          <Link to="/admin/backup" className="underline">
-            Manage
-          </Link>
+      {/* Content starts below the fixed mobile header; on md+ the header is sticky in-flow */}
+      <div className="flex flex-1 flex-col pt-[76px] md:pt-0">
+        <div className={cn("overflow-hidden transition-all duration-300 ease-out", bannerCollapsed ? "max-h-0 opacity-0" : "max-h-24 opacity-100")}>
+          <TopBanner />
+          <OfflineBanner />
         </div>
-      )}
-      <main className="flex-1">
+        {maintenance && isAdmin && (
+          <div className="flex items-center justify-center gap-2 bg-amber-500 px-4 py-1.5 text-center text-xs font-medium text-white">
+            <Construction className="h-3.5 w-3.5" /> Maintenance mode is ON — visitors see the maintenance screen.
+            <Link to="/admin/backup" className="underline">
+              Manage
+            </Link>
+          </div>
+        )}
+        <main className="flex-1">
         {maintenance && !isAdmin && !loading ? (
           <MaintenanceScreen message={settings?.general.maintenance_message ?? ""} />
         ) : (
@@ -151,7 +153,8 @@ export function PublicLayout() {
             <Outlet />
           </Suspense>
         )}
-      </main>
+        </main>
+      </div>
       <Footer />
       <BottomTabs />
       <InstallPrompt />

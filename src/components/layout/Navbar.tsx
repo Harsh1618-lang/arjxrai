@@ -195,7 +195,7 @@ export function Navbar() {
 
   return (
     <>
-    <div className="sticky top-0 z-40 w-full self-start px-3 pt-3 sm:px-5 sm:pt-4">
+    <div className="fixed inset-x-0 top-0 z-40 w-full px-3 pt-3 [transform:translateZ(0)] md:sticky md:inset-x-auto md:px-5 md:pt-4">
       <header
         className={cn(
           "relative mx-auto max-w-[1360px] rounded-full border border-zinc-200/70 bg-white/70 backdrop-blur-2xl transition-all duration-[350ms] ease-out dark:border-white/10 dark:bg-zinc-900/60",
