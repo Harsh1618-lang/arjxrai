@@ -136,11 +136,13 @@ export function PublicLayout() {
           <TopBanner />
           <OfflineBanner />
         </div>
-        <Navbar />
+        <div className="px-3 pt-2 md:px-5 md:pt-3">
+          <Navbar />
+        </div>
       </div>
       <BottomTabs />
-      {/* Content starts below the fixed header (mobile 76px + desktop 64px accounted) */}
-      <div className="flex flex-1 flex-col pt-[76px] md:pt-[64px]">
+      {/* Content starts below the fixed header + banner (banner ~32px + gap 8px + header 56-64px) */}
+      <div className="flex flex-1 flex-col pt-[104px] md:pt-[104px]">
         {maintenance && isAdmin && (
           <div className="flex items-center justify-center gap-2 bg-amber-500 px-4 py-1.5 text-center text-xs font-medium text-white">
             <Construction className="h-3.5 w-3.5" /> Maintenance mode is ON — visitors see the maintenance screen.
