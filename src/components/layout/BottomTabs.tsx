@@ -17,7 +17,7 @@ export function BottomTabs() {
   return (
     <nav
       aria-label="Primary mobile"
-      className="fixed inset-x-0 bottom-0 z-40 px-3 md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 px-3 md:hidden"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 10px)" }}
     >
       <div className="relative mx-auto flex h-14 max-w-md animate-slide-up items-stretch rounded-full border border-zinc-200/70 bg-white/80 px-2 shadow-[0_6px_24px_-10px_rgba(15,23,42,0.25)] backdrop-blur-2xl dark:border-white/10 dark:bg-zinc-900/70 dark:shadow-[0_6px_24px_-10px_rgba(0,0,0,0.7)]">
