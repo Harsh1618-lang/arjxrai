@@ -130,14 +130,17 @@ export function PublicLayout() {
     <div className="relative isolate flex min-h-screen flex-col bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       <AmbientBackground />
       <ScrollToTop />
-      <Navbar />
-      <BottomTabs />
-      {/* Content starts below the fixed mobile header */}
-      <div className="flex flex-1 flex-col pt-[76px] md:pt-0 md:pb-0">
+      {/* Fixed header + banner sit above all content */}
+      <div className="fixed inset-x-0 top-0 z-50">
         <div className={cn("overflow-hidden transition-all duration-300 ease-out", bannerCollapsed ? "max-h-0 opacity-0" : "max-h-24 opacity-100")}>
           <TopBanner />
           <OfflineBanner />
         </div>
+        <Navbar />
+      </div>
+      <BottomTabs />
+      {/* Content starts below the fixed header (mobile 76px + desktop 64px accounted) */}
+      <div className="flex flex-1 flex-col pt-[76px] md:pt-[64px]">
         {maintenance && isAdmin && (
           <div className="flex items-center justify-center gap-2 bg-amber-500 px-4 py-1.5 text-center text-xs font-medium text-white">
             <Construction className="h-3.5 w-3.5" /> Maintenance mode is ON — visitors see the maintenance screen.
