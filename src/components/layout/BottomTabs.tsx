@@ -20,7 +20,7 @@ export function BottomTabs() {
       className="fixed inset-x-0 bottom-0 z-40 px-3 md:hidden"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 10px)" }}
     >
-      <div className="relative mx-auto flex h-14 max-w-md animate-slide-up items-stretch rounded-full border border-zinc-200/80 bg-white px-2 shadow-[0_6px_24px_-10px_rgba(15,23,42,0.25)] dark:border-zinc-800 dark:bg-zinc-950 dark:shadow-[0_6px_24px_-10px_rgba(0,0,0,0.7)]">
+      <div className="relative mx-auto flex h-14 max-w-md animate-slide-up items-stretch rounded-full border border-zinc-200/70 bg-white/80 px-2 shadow-[0_6px_24px_-10px_rgba(15,23,42,0.25)] backdrop-blur-2xl dark:border-white/10 dark:bg-zinc-900/70 dark:shadow-[0_6px_24px_-10px_rgba(0,0,0,0.7)]">
           {TABS.map((t) => (
             <NavLink key={t.to} to={t.to} end={t.to === "/"} className="relative flex flex-1 flex-col items-center justify-center transition-transform duration-150 active:scale-90">
               {({ isActive }) => (
@@ -34,8 +34,10 @@ export function BottomTabs() {
                   />
                   <span
                     className={cn(
-                      "flex h-7 w-11 items-center justify-center rounded-lg transition-colors duration-200",
-                      isActive ? "bg-primary/10 text-primary" : "text-zinc-500 dark:text-zinc-400",
+                      "flex h-7 w-11 items-center justify-center rounded-lg transition-all duration-200",
+                      isActive
+                        ? "bg-primary/10 text-primary shadow-[0_0_18px_-6px_color-mix(in_srgb,var(--primary)_70%,transparent)] ring-1 ring-primary/30 dark:bg-primary/15"
+                        : "text-zinc-500 dark:text-zinc-400",
                     )}
                   >
                     <t.icon className="h-5 w-5" />
