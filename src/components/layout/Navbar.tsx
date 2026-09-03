@@ -81,6 +81,13 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+
   const menu = settings?.navigation.menu ?? [];
 
   const renderLink = (item: { label: string; href: string }, mobile = false) => {
@@ -232,22 +239,47 @@ export function Navbar() {
       {/* Mobile drawer */}
       {open && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/60 md:hidden" onClick={() => setOpen(false)} />
-          <div className="fixed right-0 top-0 z-50 h-full w-72 max-w-[82vw] animate-slide-in-right border-l border-zinc-200 bg-white dark:border-[#1a1a1a] dark:bg-[#050505] md:hidden">
-            <div className="flex h-16 items-center justify-between border-b border-zinc-100 px-4 dark:border-[#1a1a1a]">
+          <div className="fixed inset-0 z-[60] bg-black/50 md:hidden" onClick={() => setOpen(false)} />
+          <div
+            className="fixed right-0 top-0 z-[70] flex w-72 max-w-[85vw] flex-col overflow-hidden rounded-l-2xl border-l border-zinc-200 bg-white shadow-2xl animate-slide-in-right dark:border-[#1a1a1a] dark:bg-[#050505] md:hidden"
+            style={{ bottom: "calc(env(safe-area-inset-bottom, 8px) + 88px)" }}
+          >
+            <div className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-100 px-4 dark:border-[#1a1a1a]">
               <Logo />
               <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#151515]" aria-label="Close">
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <nav className="space-y-0.5 overflow-y-auto p-3" aria-label="Mobile">
+            <nav className="flex-1 space-y-0.5 overflow-y-auto p-3" aria-label="Mobile">
               {menu.map((m) => renderLink(m, true))}
             </nav>
+            <div className="shrink-0 border-t border-zinc-100 px-4 py-3 dark:border-[#1a1a1a]">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">Dark mode</span>
+                <button
+                  onClick={toggle}
+                  role="switch"
+                  aria-checked={mode === "dark"}
+                  aria-label="Toggle dark mode"
+                  className={cn(
+                    "relative h-6 w-11 shrink-0 rounded-full transition-colors",
+                    mode === "dark" ? "bg-primary" : "bg-zinc-300 dark:bg-zinc-700",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
+                      mode === "dark" ? "translate-x-[22px]" : "translate-x-0.5",
+                    )}
+                  />
+                </button>
+              </div>
+            </div>
             {!user && (
-              <div className="border-t border-zinc-100 p-3 dark:border-[#1a1a1a]">
-                <LinkButton to="/login" variant="outline" size="md" className="w-full">Log in</LinkButton>
+              <div className="flex shrink-0 gap-2 border-t border-zinc-100 p-3 dark:border-[#1a1a1a]">
+                <LinkButton to="/login" variant="outline" size="md" className="flex-1">Log in</LinkButton>
                 {settings?.general.registration_enabled && (
-                  <LinkButton to="/register" size="md" className="mt-2 w-full">Get started</LinkButton>
+                  <LinkButton to="/register" size="md" className="flex-1">Get started</LinkButton>
                 )}
               </div>
             )}
