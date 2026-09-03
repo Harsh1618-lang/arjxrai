@@ -13,7 +13,7 @@ let logoTaps = 0;
 let lastTap = 0;
 const TAP_WINDOW_MS = 1400;
 
-export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
+export function Logo({ className, compact = false, dense = false }: { className?: string; compact?: boolean; dense?: boolean }) {
   const { data: settings } = useSettings();
   const navigate = useNavigate();
   const toast = useToast();
@@ -33,22 +33,28 @@ export function Logo({ className, compact = false }: { className?: string; compa
   };
 
   return (
-    <Link to="/" onClick={handleTap} className={cn("flex items-center gap-2.5 font-bold tracking-tight text-zinc-900 dark:text-white", className)} aria-label={name}>
+    <Link
+      to="/"
+      onClick={handleTap}
+      className={cn("flex items-center font-bold tracking-tight text-zinc-900 transition-all duration-[350ms] ease-out dark:text-white", dense ? "gap-1.5" : "gap-2.5", className)}
+      aria-label={name}
+    >
       {logo ? (
-        <img src={logo} alt={name} className="h-8 w-8 rounded-[10px] object-cover" />
+        <img src={logo} alt={name} className={cn("rounded-[10px] object-cover transition-all duration-[350ms] ease-out", dense ? "h-6 w-6 rounded-lg" : "h-8 w-8")} />
       ) : (
-        <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-primary text-white">
-          <GraduationCap className="h-4 w-4" />
+        <span className={cn("flex items-center justify-center bg-primary text-white transition-all duration-[350ms] ease-out", dense ? "h-6 w-6 rounded-lg" : "h-8 w-8 rounded-[10px]")}>
+          <GraduationCap className={cn("transition-all duration-[350ms] ease-out", dense ? "h-3 w-3" : "h-4 w-4")} />
         </span>
       )}
-      {!compact && <span className="text-[16px]">{name}</span>}
+      {!compact && <span className={cn("transition-all duration-[350ms] ease-out", dense ? "text-[14px]" : "text-[16px]")}>{name}</span>}
     </Link>
   );
 }
 
-const linkBase = "relative rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150";
-const linkIdle = "text-zinc-600 hover:bg-zinc-900/[0.04] hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-white/[0.06] dark:hover:text-white";
-const linkActive = "text-primary after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-primary";
+const linkBase = (dense: boolean) =>
+  cn("relative rounded-full px-4 font-medium transition-all duration-[350ms] ease-out", dense ? "py-1 text-[13px]" : "py-2 text-sm");
+const linkIdle = "text-zinc-600 hover:bg-zinc-900/[0.05] hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-white/[0.07] dark:hover:text-white";
+const linkActive = "bg-primary/10 text-primary dark:bg-primary/15";
 
 export function Navbar() {
   const { data: settings } = useSettings();
@@ -58,9 +64,30 @@ export function Navbar() {
   const [drawer, setDrawer] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [q, setQ] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  /* Smooth shrink-on-scroll: rAF-throttled so the resize stays buttery. */
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        setScrolled(window.scrollY > 16);
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -90,7 +117,7 @@ export function Navbar() {
   };
 
   const renderLink = (item: { label: string; href: string }) => {
-    const cls = ({ isActive }: { isActive: boolean }) => cn(linkBase, isActive ? linkActive : linkIdle);
+    const cls = ({ isActive }: { isActive: boolean }) => cn(linkBase(scrolled), isActive ? linkActive : linkIdle);
     if (isExternal(item.href)) {
       return (
         <a key={item.label} href={safeUrl(item.href)} target="_blank" rel="noopener noreferrer" className={cls({ isActive: false })}>
@@ -119,7 +146,10 @@ export function Navbar() {
               placeholder="Search courses…"
               aria-label="Search courses"
               tabIndex={searchOpen ? 0 : -1}
-              className="h-9 w-full rounded-full border border-zinc-200 bg-zinc-50 px-3.5 text-sm text-zinc-800 outline-none transition-colors placeholder:text-zinc-400 focus:border-primary/40 focus:bg-white focus:ring-2 focus:ring-primary/10 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:bg-zinc-900"
+              className={cn(
+                "w-full rounded-full border border-zinc-200 bg-zinc-50 px-3.5 text-sm text-zinc-800 outline-none transition-all duration-300 ease-out placeholder:text-zinc-400 focus:border-primary/40 focus:bg-white focus:ring-2 focus:ring-primary/10 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:bg-zinc-900",
+                scrolled ? "h-8" : "h-9",
+              )}
             />
           </form>
         </div>
@@ -133,7 +163,11 @@ export function Navbar() {
             navigate("/courses?focus=1");
           }
         }}
-        className={cn("rounded-lg p-2 text-zinc-500 transition-colors duration-150 hover:bg-zinc-900/[0.04] hover:text-zinc-900 dark:hover:bg-white/[0.06] dark:hover:text-white", searchOpen && expandable && "text-primary")}
+        className={cn(
+          "flex items-center justify-center rounded-full text-zinc-500 transition-all duration-[350ms] ease-out hover:bg-zinc-900/[0.05] hover:text-zinc-900 dark:hover:bg-white/[0.07] dark:hover:text-white",
+          scrolled ? "h-8 w-8" : "h-9 w-9",
+          searchOpen && expandable && "bg-primary/10 text-primary",
+        )}
         aria-label="Search courses"
         aria-expanded={expandable ? searchOpen : undefined}
       >
@@ -144,11 +178,23 @@ export function Navbar() {
 
   return (
     <>
-    <div className="sticky top-0 z-40">
-      <header className="relative border-b border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-        <div className="mx-auto flex h-16 max-w-[1360px] items-center justify-between gap-6 px-4 sm:px-6 lg:gap-8 lg:px-8">
+    <div className="sticky top-0 z-40 px-3 pt-3 sm:px-5 sm:pt-4">
+      <header
+        className={cn(
+          "relative mx-auto max-w-[1360px] rounded-full border bg-white transition-all duration-[350ms] ease-out dark:bg-zinc-950",
+          scrolled
+            ? "border-zinc-200/90 shadow-[0_12px_32px_-14px_rgba(15,23,42,0.28)] dark:border-zinc-800 dark:shadow-[0_12px_32px_-14px_rgba(0,0,0,0.75)]"
+            : "border-zinc-200/70 shadow-[0_2px_12px_-8px_rgba(15,23,42,0.16)] dark:border-zinc-800/70 dark:shadow-[0_2px_12px_-8px_rgba(0,0,0,0.55)]",
+        )}
+      >
+        <div
+          className={cn(
+            "flex items-center justify-between gap-6 px-5 transition-all duration-[350ms] ease-out sm:px-7 lg:gap-8",
+            scrolled ? "h-12" : "h-16",
+          )}
+        >
           {/* Group 1 — logo */}
-          <Logo className="shrink-0" />
+          <Logo className="shrink-0" dense={scrolled} />
 
           {/* Group 2 — primary navigation */}
           <nav className="hidden min-w-0 items-center gap-0.5 lg:flex" aria-label="Main">
@@ -161,10 +207,16 @@ export function Navbar() {
 
             <button
               onClick={toggle}
-              className="hidden rounded-lg p-2 text-zinc-500 transition-colors duration-150 hover:bg-zinc-900/[0.04] hover:text-zinc-900 dark:hover:bg-white/[0.06] dark:hover:text-white lg:inline-flex"
-              aria-label="Toggle theme"
+              title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              className={cn(
+                "inline-flex items-center justify-center rounded-full border border-zinc-200 text-zinc-600 transition-all duration-[350ms] ease-out hover:border-zinc-300 hover:text-zinc-900 active:scale-90 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:text-white",
+                scrolled ? "h-8 w-8" : "h-9 w-9",
+              )}
+              aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {mode === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              <span key={mode} className="animate-icon-flip inline-flex">
+                {mode === "dark" ? <Sun className={cn("transition-all duration-[350ms]", scrolled ? "h-4 w-4" : "h-[18px] w-[18px]")} /> : <Moon className={cn("transition-all duration-[350ms]", scrolled ? "h-4 w-4" : "h-[18px] w-[18px]")} />}
+              </span>
             </button>
 
             {user ? (
@@ -205,11 +257,23 @@ export function Navbar() {
               </div>
             ) : (
               <div className="hidden items-center gap-1.5 lg:flex">
-                <Link to="/login" className="rounded-lg px-2.5 py-2 text-sm font-medium text-zinc-700 transition-colors duration-150 hover:bg-zinc-900/[0.04] hover:text-zinc-900 dark:text-zinc-200 dark:hover:bg-white/[0.06]">
+                <Link
+                  to="/login"
+                  className={cn(
+                    "rounded-full font-medium text-zinc-700 transition-all duration-[350ms] ease-out hover:bg-zinc-900/[0.05] hover:text-zinc-900 dark:text-zinc-200 dark:hover:bg-white/[0.07]",
+                    scrolled ? "px-3 py-1.5 text-[13px]" : "px-4 py-2 text-sm",
+                  )}
+                >
                   Log in
                 </Link>
                 {settings?.general.registration_enabled && (
-                  <Link to="/register" className="rounded-[10px] bg-primary px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-primary-hover">
+                  <Link
+                    to="/register"
+                    className={cn(
+                      "rounded-full bg-primary font-semibold text-white transition-all duration-[350ms] ease-out hover:bg-primary-hover active:scale-[0.97]",
+                      scrolled ? "px-4 py-1.5 text-[13px]" : "px-5 py-2 text-sm",
+                    )}
+                  >
                     Get Started
                   </Link>
                 )}
@@ -218,7 +282,15 @@ export function Navbar() {
 
             {/* Mobile — search + hamburger */}
             {searchControl(false)}
-            <button onClick={() => setDrawer(true)} className="rounded-lg p-2 text-zinc-600 transition-colors duration-150 hover:bg-zinc-900/[0.04] dark:text-zinc-300 dark:hover:bg-white/[0.06] lg:hidden" aria-label="Open menu" aria-expanded={drawer}>
+            <button
+              onClick={() => setDrawer(true)}
+              className={cn(
+                "flex items-center justify-center rounded-full text-zinc-600 transition-all duration-[350ms] ease-out hover:bg-zinc-900/[0.05] dark:text-zinc-300 dark:hover:bg-white/[0.07] lg:hidden",
+                scrolled ? "h-8 w-8" : "h-9 w-9",
+              )}
+              aria-label="Open menu"
+              aria-expanded={drawer}
+            >
               <Menu className="h-5 w-5" />
             </button>
           </div>
