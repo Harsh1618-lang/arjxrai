@@ -98,8 +98,8 @@ export function Navbar() {
           : "relative rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors duration-150",
         mobile
           ? isActive
-            ? "text-white bg-white/8"
-            : "text-zinc-400 hover:text-white hover:bg-white/5"
+            ? "text-zinc-900 bg-zinc-100 dark:text-white dark:bg-white/8"
+            : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/5"
           : isActive
             ? "text-zinc-900 dark:text-white"
             : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-200",
@@ -271,8 +271,8 @@ export function Navbar() {
                 >
                   <span
                     className={cn(
-                      "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
-                      mode === "dark" ? "translate-x-[22px]" : "translate-x-0.5",
+                      "absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
+                      mode === "dark" ? "translate-x-5" : "translate-x-0",
                     )}
                   />
                 </button>
