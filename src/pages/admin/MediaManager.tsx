@@ -1,12 +1,21 @@
 import { useMemo, useState } from "react";
-import { Copy, ExternalLink, Image as ImageIcon, Plus, Trash2 } from "lucide-react";
+import { Cloud, Copy, ExternalLink, FolderOpen, Image as ImageIcon, Plus, Trash2, Zap } from "lucide-react";
 import { Seo } from "@/lib/seo";
 import { mutations, useMedia } from "@/hooks/queries";
 import { useToast } from "@/hooks/useToast";
 import { TelegramIcon } from "@/components/icons";
 import { Badge, Button, Card, ConfirmDialog, EmptyState, Input, Modal, PageHeader, Select } from "@/components/ui";
-import { cn, copyToClipboard, formatDate, getErrorMessage, isSafeUrl, isTelegramLink } from "@/lib/utils";
+import { cn, copyToClipboard, detectMediaSource, formatDate, getErrorMessage, isSafeUrl, type MediaSource } from "@/lib/utils";
 import type { MediaItem, MediaType } from "@/types";
+
+const SOURCE_META: Record<MediaSource, { label: string; icon: React.ReactNode; color: string }> = {
+  telegram: { label: "Telegram", icon: <TelegramIcon className="h-3.5 w-3.5" />, color: "#229ED9" },
+  cloudinary: { label: "Cloudinary", icon: <Cloud className="h-3.5 w-3.5" />, color: "#3448C5" },
+  gdrive: { label: "Google Drive", icon: <FolderOpen className="h-3.5 w-3.5" />, color: "#0F9D58" },
+  imagekit: { label: "ImageKit", icon: <ImageIcon className="h-3.5 w-3.5" />, color: "#DE3A6E" },
+  bunny: { label: "Bunny.net", icon: <Zap className="h-3.5 w-3.5" />, color: "#FF7B00" },
+  other: { label: "Direct link", icon: <ImageIcon className="h-3.5 w-3.5" />, color: "#71717A" },
+};
 
 const TYPES: { value: MediaType | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -58,12 +67,20 @@ export default function MediaManager() {
       />
 
       <Card className="mb-5 flex items-start gap-3 border-sky-200 bg-sky-50/60 p-4 text-sm dark:border-sky-900 dark:bg-sky-950/30">
-        <TelegramIcon className="mt-0.5 h-5 w-5 shrink-0 text-sky-500" />
+        <ImageIcon className="mt-0.5 h-5 w-5 shrink-0 text-sky-500" />
         <div>
           <p className="font-medium">How storage works</p>
           <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-300">
-            Upload PDFs, ZIPs and images to your <b>private Telegram channel</b>, copy the post link (e.g. <code>https://t.me/c/123456/78</code> or <code>https://t.me/channel/78</code>) and save it here. The database only stores links — zero hosting cost.
+            The database only stores <b>links</b> — the actual files stay wherever you upload them, zero hosting cost here. Any of these work:
           </p>
+          <ul className="mt-1.5 space-y-0.5 text-xs text-zinc-600 dark:text-zinc-300">
+            <li>• <b>Telegram</b> — upload to a private channel, copy the post link (<code>t.me/c/123456/78</code> or <code>t.me/channel/78</code>)</li>
+            <li>• <b>Cloudinary</b> — copy the delivery URL from your Media Library (<code>res.cloudinary.com/…</code>)</li>
+            <li>• <b>Google Drive</b> — set the file to "Anyone with the link", then copy the share link</li>
+            <li>• <b>ImageKit</b> — copy the file URL from your Media Library (<code>ik.imagekit.io/…</code>)</li>
+            <li>• <b>Bunny.net</b> — copy the Direct play URL or CDN link (<code>…mediadelivery.net/…</code> or <code>…b-cdn.net/…</code>)</li>
+          </ul>
+          <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-300">The source is auto-detected from the link you paste.</p>
         </div>
       </Card>
 
@@ -80,7 +97,9 @@ export default function MediaManager() {
       ) : (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {filtered.map((m) => {
-            const tg = m.type === "telegram" || isTelegramLink(m.url);
+            const src = detectMediaSource(m.url);
+            const meta = SOURCE_META[src];
+            const tg = src === "telegram";
             return (
               <div key={m.id} className="group overflow-hidden rounded-[calc(var(--radius)+4px)] border border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                 <div className="flex aspect-[4/3] items-center justify-center bg-zinc-100 dark:bg-zinc-800">
@@ -90,9 +109,12 @@ export default function MediaManager() {
                   <p className="truncate text-sm font-medium" title={m.name}>
                     {m.name}
                   </p>
-                  <div className="mt-1 flex items-center justify-between">
+                  <div className="mt-1 flex flex-wrap items-center gap-1.5">
                     <Badge className="capitalize">{m.type}</Badge>
-                    <span className="text-[11px] text-zinc-400">{formatDate(m.created_at)}</span>
+                    <Badge color={meta.color}>
+                      {meta.icon} {meta.label}
+                    </Badge>
+                    <span className="ml-auto text-[11px] text-zinc-400">{formatDate(m.created_at)}</span>
                   </div>
                   <div className="mt-2 flex gap-1">
                     <Button size="sm" variant="outline" className="flex-1" onClick={() => copy(m.url)}>
@@ -127,7 +149,13 @@ export default function MediaManager() {
           <div className="space-y-4">
             <Input label="Name" value={adding.name ?? ""} onChange={(e) => setAdding({ ...adding, name: e.target.value })} required />
             <Select label="Type" value={adding.type ?? "image"} onChange={(e) => setAdding({ ...adding, type: e.target.value as MediaType })} options={TYPES.filter((t) => t.value !== "all") as { value: string; label: string }[]} />
-            <Input label="URL" value={adding.url ?? ""} onChange={(e) => setAdding({ ...adding, url: e.target.value })} placeholder="https://… or https://t.me/channel/123" />
+            <Input
+              label="URL"
+              value={adding.url ?? ""}
+              onChange={(e) => setAdding({ ...adding, url: e.target.value })}
+              placeholder="Telegram, Cloudinary, Google Drive, ImageKit, or Bunny.net link"
+              hint={adding.url ? `✓ Detected: ${SOURCE_META[detectMediaSource(adding.url)].label}` : "Paste a link from any supported storage — the source is auto-detected."}
+            />
             {adding.url && adding.type !== "telegram" && isSafeUrl(adding.url) && <img src={adding.url} alt="" className="max-h-40 rounded-lg border border-zinc-200 object-contain dark:border-zinc-700" />}
           </div>
         )}

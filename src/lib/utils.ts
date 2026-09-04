@@ -115,6 +115,18 @@ export function isTelegramLink(url: string): boolean {
   return /(^|\/\/)(www\.)?t\.me\//i.test(url) || /^tg:\/\//i.test(url);
 }
 
+export type MediaSource = "telegram" | "cloudinary" | "gdrive" | "imagekit" | "bunny" | "other";
+
+export function detectMediaSource(url: string): MediaSource {
+  if (!url) return "other";
+  if (isTelegramLink(url)) return "telegram";
+  if (/res\.cloudinary\.com\//i.test(url)) return "cloudinary";
+  if (/drive\.google\.com\//i.test(url)) return "gdrive";
+  if (/ik\.imagekit\.io\//i.test(url)) return "imagekit";
+  if (/mediadelivery\.net\/|\.b-cdn\.net\//i.test(url)) return "bunny";
+  return "other";
+}
+
 export function contrastText(hex: string): string {
   const m = hex.replace("#", "");
   if (m.length < 6) return "#111827";
