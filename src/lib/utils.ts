@@ -80,7 +80,7 @@ export function parseVideo(url: string): ParsedVideo {
   if (tg) return { type: "telegram", channel: tg[1], post: tg[2] };
   const gd = trimmed.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/) || trimmed.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([A-Za-z0-9_-]+)/);
   if (gd) return { type: "gdrive", id: gd[1] };
-  const bunny = trimmed.match(/(?:iframe\.mediadelivery\.net|video\.bunnycdn\.com)\/(?:embed|play)\/(\d+)\/([A-Za-z0-9-]+)/i);
+  const bunny = trimmed.match(/(?:[a-z0-9-]+\.)?mediadelivery\.net\/(?:embed|play)\/(\d+)\/([A-Za-z0-9-]+)/i) || trimmed.match(/video\.bunnycdn\.com\/(?:embed|play)\/(\d+)\/([A-Za-z0-9-]+)/i);
   if (bunny) return { type: "bunny", library: bunny[1], video: bunny[2] };
   if (/^https?:\/\/\S+\.(mp4|webm|ogg|ogv|mov|m3u8)(\?\S*)?$/i.test(trimmed)) return { type: "direct", url: trimmed };
   if (/res\.cloudinary\.com\/[^/]+\/video\/upload\//i.test(trimmed)) return { type: "direct", url: trimmed };
