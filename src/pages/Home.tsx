@@ -38,7 +38,15 @@ export default function Home() {
       <section className="relative overflow-hidden">
         {/* AMOLED hero glow — one single accent moment */}
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute left-1/2 top-0 h-[420px] w-[800px] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]" />
+          <div
+            className="absolute inset-0 opacity-[0.04] dark:opacity-[0.07]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
+            }}
+          />
+          <div className="absolute left-1/2 top-0 h-[420px] w-[800px] -translate-x-1/2 animate-glow-pulse rounded-full bg-primary/10 blur-[120px]" />
         </div>
 
         <div className="mx-auto grid max-w-[1280px] items-center gap-12 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
