@@ -63,6 +63,7 @@ export type ParsedVideo =
   | { type: "youtube"; id: string }
   | { type: "telegram"; channel: string; post: string }
   | { type: "gdrive"; id: string }
+  | { type: "bunny"; library: string; video: string }
   | { type: "direct"; url: string }
   | { type: "unknown" };
 
@@ -77,7 +78,12 @@ export function parseVideo(url: string): ParsedVideo {
   if (tg) return { type: "telegram", channel: tg[1], post: tg[2] };
   const gd = trimmed.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/) || trimmed.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([A-Za-z0-9_-]+)/);
   if (gd) return { type: "gdrive", id: gd[1] };
+  const bunny = trimmed.match(/(?:iframe\.mediadelivery\.net|video\.bunnycdn\.com)\/(?:embed|play)\/(\d+)\/([A-Za-z0-9-]+)/i);
+  if (bunny) return { type: "bunny", library: bunny[1], video: bunny[2] };
   if (/^https?:\/\/\S+\.(mp4|webm|ogg|ogv|mov|m3u8)(\?\S*)?$/i.test(trimmed)) return { type: "direct", url: trimmed };
+  if (/res\.cloudinary\.com\/[^/]+\/video\/upload\//i.test(trimmed)) return { type: "direct", url: trimmed };
+  if (/ik\.imagekit\.io\//i.test(trimmed)) return { type: "direct", url: trimmed };
+  if (/\.b-cdn\.net\//i.test(trimmed)) return { type: "direct", url: trimmed };
   return { type: "unknown" };
 }
 
@@ -91,6 +97,9 @@ export function getEmbedUrl(url: string): string | null {
   }
   if (parsed.type === "gdrive") {
     return `https://drive.google.com/file/d/${parsed.id}/preview`;
+  }
+  if (parsed.type === "bunny") {
+    return `https://iframe.mediadelivery.net/embed/${parsed.library}/${parsed.video}`;
   }
   return null;
 }

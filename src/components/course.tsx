@@ -14,6 +14,7 @@ export function LessonTypeBadge({ type }: { type: VideoType }) {
     youtube: { label: "YouTube", color: "#FF0000" },
     gdrive: { label: "Google Drive", color: "#0F9D58" },
     direct: { label: "Video file", color: "#7C3AED" },
+    bunny: { label: "Bunny", color: "#FF7B00" },
   };
   const { label, color } = meta[type] ?? meta.youtube;
   return (

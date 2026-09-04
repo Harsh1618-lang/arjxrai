@@ -343,17 +343,18 @@ function LessonsPanel({ courseId, items }: { courseId: string; items: Lesson[] }
                 const video_type = p.type === "unknown" ? "youtube" : p.type;
                 crud.setEditing({ ...e, video_url: url, video_type });
               }}
-              placeholder="YouTube, Telegram, Google Drive share link, or a direct .mp4 (Cloudinary/ImageKit) URL"
+              placeholder="YouTube, Telegram, Google Drive, Bunny.net embed link, or a direct .mp4 (Cloudinary/ImageKit) URL"
               hint={
                 parsed?.type === "youtube" ? `✓ YouTube video ${parsed.id}` :
                 parsed?.type === "telegram" ? `✓ Telegram post ${parsed.channel}/${parsed.post}` :
                 parsed?.type === "gdrive" ? `✓ Google Drive file ${parsed.id}` :
+                parsed?.type === "bunny" ? `✓ Bunny.net video ${parsed.video}` :
                 parsed?.type === "direct" ? "✓ Direct video file (Cloudinary / ImageKit / other)" :
                 "Paste a YouTube, Telegram, Google Drive, or direct video file link."
               }
             />
             <div className="grid grid-cols-2 gap-4">
-              <Select label="Source" value={e.video_type ?? "youtube"} onChange={(ev) => crud.setEditing({ ...e, video_type: ev.target.value as Lesson["video_type"] })} options={[{ value: "youtube", label: "YouTube" }, { value: "telegram", label: "Telegram" }, { value: "gdrive", label: "Google Drive" }, { value: "direct", label: "Direct file (Cloudinary/ImageKit)" }]} />
+              <Select label="Source" value={e.video_type ?? "youtube"} onChange={(ev) => crud.setEditing({ ...e, video_type: ev.target.value as Lesson["video_type"] })} options={[{ value: "youtube", label: "YouTube" }, { value: "telegram", label: "Telegram" }, { value: "gdrive", label: "Google Drive" }, { value: "bunny", label: "Bunny.net" }, { value: "direct", label: "Direct file (Cloudinary/ImageKit)" }]} />
               <Input label="Duration" value={e.duration ?? ""} onChange={(ev) => crud.setEditing({ ...e, duration: ev.target.value })} placeholder="1h 20m" />
             </div>
             <Textarea label="Description" rows={3} value={e.description ?? ""} onChange={(ev) => crud.setEditing({ ...e, description: ev.target.value })} />
