@@ -1,112 +1,19 @@
-export { cn } from "@/utils/cn";
-
-export function uid(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
-
-export function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-export function formatDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-}
-
-export function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return "just now";
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  if (d < 30) return `${d}d ago`;
-  return formatDate(iso);
-}
-
-export function truncate(text: string, max = 120): string {
-  if (!text) return "";
-  return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text;
-}
-
-export function pluralize(n: number, word: string, plural = `${word}s`): string {
-  return `${n} ${n === 1 ? word : plural}`;
-}
-
-export function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
-}
-
-/** Only allow safe URL schemes to prevent javascript: XSS vectors. */
-export function isSafeUrl(url: string): boolean {
-  if (!url) return false;
-  return /^(https?:\/\/|mailto:|tel:|tg:\/\/|\/(?!\/)|#)/i.test(url.trim());
-}
-
-export function safeUrl(url: string): string {
-  return isSafeUrl(url) ? url.trim() : "#";
-}
-
-export function isExternal(url: string): boolean {
-  return /^(https?:)?\/\//i.test(url) || /^(mailto|tel|tg):/i.test(url);
-}
-
-export type ParsedVideo =
-  | { type: "youtube"; id: string }
-  | { type: "telegram"; channel: string; post: string }
-  | { type: "gdrive"; id: string }
-  | { type: "bunny"; library: string; video: string }
-  | { type: "direct"; url: string }
-  | { type: "unknown" };
-
-export function parseVideo(url: string): ParsedVideo {
-  if (!url) return { type: "unknown" };
-  const trimmed = url.trim();
-  const yt =
-    trimmed.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/) ||
-    (/^[A-Za-z0-9_-]{11}$/.test(trimmed) ? [trimmed, trimmed] : null);
-  if (yt) return { type: "youtube", id: yt[1] };
-  const tg = trimmed.match(/t\.me\/(?:s\/)?([A-Za-z0-9_]+)\/(\d+)/);
-  if (tg) return { type: "telegram", channel: tg[1], post: tg[2] };
-  const gd = trimmed.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/) || trimmed.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([A-Za-z0-9_-]+)/);
-  if (gd) return { type: "gdrive", id: gd[1] };
-  const bunny = trimmed.match(/(?:iframe\.mediadelivery\.net|video\.bunnycdn\.com)\/(?:embed|play)\/(\d+)\/([A-Za-z0-9-]+)/i);
-  if (bunny) return { type: "bunny", library: bunny[1], video: bunny[2] };
-  if (/^https?:\/\/\S+\.(mp4|webm|ogg|ogv|mov|m3u8)(\?\S*)?$/i.test(trimmed)) return { type: "direct", url: trimmed };
-  if (/res\.cloudinary\.com\/[^/]+\/video\/upload\//i.test(trimmed)) return { type: "direct", url: trimmed };
-  if (/ik\.imagekit\.io\//i.test(trimmed)) return { type: "direct", url: trimmed };
-  if (/\.b-cdn\.net\//i.test(trimmed)) return { type: "direct", url: trimmed };
-  return { type: "unknown" };
-}
-
-export function getEmbedUrl(url: string): string | null {
-  const parsed = parseVideo(url);
-  if (parsed.type === "youtube") {
-    return `https://www.youtube-nocookie.com/embed/${parsed.id}?rel=0&modestbranding=1`;
-  }
   if (parsed.type === "telegram") {
-    return `https://t.me/${parsed.channel}/${parsed.post}?embed=1&mode=tme`;
+    return https://t.me/${parsed.channel}/${parsed.post}?embed=1&mode=tme;
   }
   if (parsed.type === "gdrive") {
-    return `https://drive.google.com/file/d/${parsed.id}/preview`;
+    return https://drive.google.com/file/d/${parsed.id}/preview;
   }
   if (parsed.type === "bunny") {
-    return `https://iframe.mediadelivery.net/embed/${parsed.library}/${parsed.video}`;
+    return https://iframe.mediadelivery.net/embed/${parsed.library}/${parsed.video};
   }
   return null;
 }
 
 export function youtubeThumb(url: string): string | null {
   const parsed = parseVideo(url);
-  return parsed.type === "youtube" ? `https://i.ytimg.com/vi/${parsed.id}/hqdefault.jpg` : null;
+  return parsed.type === "youtube" ? https://i.ytimg.com/vi/${parsed.id}/hqdefault.jpg : null;
 }
 
 export function isTelegramLink(url: string): boolean {
