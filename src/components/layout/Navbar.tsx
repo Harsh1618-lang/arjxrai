@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { GraduationCap, LayoutDashboard, LogOut, Menu, Moon, Search, Settings, Sun, User, X } from "lucide-react";
 import { useSettings } from "@/hooks/queries";
@@ -274,12 +275,11 @@ export function Navbar() {
       </div>
 
       {/* Mobile drawer with liquid glass styling */}
-      {open && (
-        <>
-          <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm md:hidden" onClick={() => setOpen(false)} />
+      {open && typeof document !== "undefined" && createPortal(
+        <div className="md:hidden">
+          <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-xs animate-fade-in" onClick={() => setOpen(false)} />
           <div
-            className="liquid-glass-bar fixed right-0 top-0 z-[70] flex w-72 max-w-[85vw] flex-col overflow-hidden rounded-l-3xl border-l border-white/80 shadow-2xl animate-slide-in-right md:hidden"
-            style={{ bottom: "calc(env(safe-area-inset-bottom, 8px) + 88px)" }}
+            className="liquid-glass-bar fixed inset-y-0 right-0 z-[70] flex h-full w-72 max-w-[85vw] flex-col overflow-hidden rounded-l-3xl border-l border-white/80 shadow-2xl animate-slide-in-right"
           >
             {/* Dynamic liquid blobs & glow contained EXCLUSIVELY INSIDE the hamburger menu */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-l-3xl" aria-hidden>
@@ -409,7 +409,8 @@ export function Navbar() {
               </div>
             )}
           </div>
-        </>
+        </div>,
+        document.body,
       )}
     </header>
   );

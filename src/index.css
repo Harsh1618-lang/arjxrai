@@ -262,7 +262,6 @@ header .header-zoom-text:hover {
 
 /* ─── Liquid glass header & bottom navigation bar ─── */
 .liquid-glass-bar {
-  position: relative;
   backdrop-filter: blur(28px) saturate(210%) brightness(105%);
   -webkit-backdrop-filter: blur(28px) saturate(210%) brightness(105%);
   background: linear-gradient(

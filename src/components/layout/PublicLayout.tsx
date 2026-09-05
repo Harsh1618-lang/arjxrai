@@ -85,7 +85,7 @@ export function PublicLayout() {
           </Link>
         </div>
       )}
-      <main className="flex-1 overflow-x-clip pb-20 md:pb-0">
+      <main className="flex-1 overflow-x-clip">
         {maintenance && !isAdmin && !loading ? (
           <MaintenanceScreen message={settings?.general.maintenance_message ?? ""} />
         ) : (
@@ -94,9 +94,7 @@ export function PublicLayout() {
           </Suspense>
         )}
       </main>
-      <div className="hidden md:block">
-        <Footer />
-      </div>
+      <Footer />
       <BottomNav />
       <InstallPrompt />
     </div>

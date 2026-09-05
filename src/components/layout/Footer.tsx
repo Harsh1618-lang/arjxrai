@@ -65,7 +65,7 @@ export function Footer() {
       {/* Shimmer sweep effect */}
       <div className="pointer-events-none absolute -inset-full liquid-shimmer opacity-30 dark:opacity-12" />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-12 pb-28 sm:px-6 sm:py-14 lg:px-8">
         <div className="grid gap-12 md:grid-cols-4">
 
           {/* Brand */}
