@@ -39,7 +39,7 @@ export function Logo({ className, compact = false, onSecretTap }: { className?: 
           <GraduationCap className="h-3.5 w-3.5" />
         </span>
       )}
-      {!compact && <span className="text-[14px] font-semibold">{name}</span>}
+      {!compact && <span className="text-[14px] font-semibold header-zoom-text">{name}</span>}
     </Link>
   );
 }
@@ -115,7 +115,7 @@ export function Navbar() {
     if (isExternal(item.href)) {
       return (
         <a key={item.label} href={safeUrl(item.href)} target="_blank" rel="noopener noreferrer" className={cls({ isActive: false })}>
-          {item.label}
+          <span className="header-zoom-text">{item.label}</span>
         </a>
       );
     }
@@ -123,7 +123,7 @@ export function Navbar() {
       <NavLink key={item.label} to={item.href} end={item.href === "/"} className={cls} onClick={() => setOpen(false)}>
         {(props: { isActive: boolean }) => (
           <>
-            {item.label}
+            <span className="header-zoom-text">{item.label}</span>
             {props.isActive && !mobile && (
               <span className="absolute bottom-0 left-1/2 h-px w-4 -translate-x-1/2 bg-primary" />
             )}
@@ -232,9 +232,13 @@ export function Navbar() {
               </div>
             ) : (
               <div className="ml-1 hidden items-center gap-1 sm:flex">
-                <LinkButton to="/login" variant="ghost" size="sm" className="px-3 text-[13px]">Log in</LinkButton>
+                <LinkButton to="/login" variant="ghost" size="sm" className="px-3 text-[13px]">
+                  <span className="header-zoom-text">Log in</span>
+                </LinkButton>
                 {settings?.general.registration_enabled && (
-                  <LinkButton to="/register" size="sm" className="px-3 text-[13px]">Get started</LinkButton>
+                  <LinkButton to="/register" size="sm" className="px-3 text-[13px]">
+                    <span className="header-zoom-text">Get started</span>
+                  </LinkButton>
                 )}
               </div>
             )}
@@ -332,9 +336,13 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex shrink-0 gap-2 border-t border-zinc-100 p-3 dark:border-[#1a1a1a]">
-                <LinkButton to="/login" variant="outline" size="md" className="flex-1" onClick={() => setOpen(false)}>Log in</LinkButton>
+                <LinkButton to="/login" variant="outline" size="md" className="flex-1" onClick={() => setOpen(false)}>
+                  <span className="header-zoom-text">Log in</span>
+                </LinkButton>
                 {settings?.general.registration_enabled && (
-                  <LinkButton to="/register" size="md" className="flex-1" onClick={() => setOpen(false)}>Get started</LinkButton>
+                  <LinkButton to="/register" size="md" className="flex-1" onClick={() => setOpen(false)}>
+                    <span className="header-zoom-text">Get started</span>
+                  </LinkButton>
                 )}
               </div>
             )}
@@ -353,7 +361,7 @@ function MenuLink({ to, icon, children, onClick }: { to: string; icon: React.Rea
       className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-[#151515] dark:hover:text-white"
     >
       {icon}
-      {children}
+      <span className="header-zoom-text">{children}</span>
     </Link>
   );
 }

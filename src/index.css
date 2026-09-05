@@ -140,23 +140,51 @@
 .prose-srd hr { margin: 2rem 0; border-color: #e4e4e7; }
 .dark .prose-srd hr { border-color: #1f1f1f; }
 
-/* Text hover glow — subtle zoom + soft glow on headings/paragraphs (public pages only) */
+/* ─── Smooth text hover zoom-out effect ─── */
 .text-hover-fx h1,
 .text-hover-fx h2,
 .text-hover-fx h3,
 .text-hover-fx h4,
 .text-hover-fx h5,
 .text-hover-fx h6,
-.text-hover-fx p {
-  transition: transform 0.25s ease, text-shadow 0.25s ease;
+.text-hover-fx p,
+.text-hover-fx blockquote,
+.text-hover-fx label,
+.header-zoom-text {
+  transform-origin: center;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.28s ease, color 0.2s ease;
+  will-change: transform;
 }
+
 .text-hover-fx h1:hover,
 .text-hover-fx h2:hover,
 .text-hover-fx h3:hover,
 .text-hover-fx h4:hover,
 .text-hover-fx h5:hover,
 .text-hover-fx h6:hover,
-.text-hover-fx p:hover {
-  transform: scale(1.02);
-  text-shadow: 0 0 14px color-mix(in oklab, var(--primary) 55%, transparent);
+.text-hover-fx p:hover,
+.text-hover-fx blockquote:hover,
+.text-hover-fx label:hover {
+  transform: scale(0.97);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--primary) 50%, transparent);
 }
+
+/* Header specific text zoom-out */
+header .header-zoom-text,
+header nav a,
+header a,
+header button {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.28s ease, color 0.2s ease;
+}
+
+header .header-zoom-text {
+  display: inline-block;
+}
+
+header a:hover .header-zoom-text,
+header button:hover .header-zoom-text,
+header .header-zoom-text:hover {
+  transform: scale(0.92);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--primary) 65%, transparent);
+}
+
