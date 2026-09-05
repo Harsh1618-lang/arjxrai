@@ -137,25 +137,47 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 transition-all duration-300">
-      <div className={cn("mx-auto max-w-[1280px] transition-all duration-300 ease-out", scrolled ? "px-3 pt-3 sm:px-4" : "px-0 pt-0")}>
+      <div className={cn("mx-auto max-w-[1280px] transition-all duration-300 ease-out", scrolled ? "px-3 pt-3 sm:px-4" : "px-2 pt-2 sm:px-4 sm:pt-2.5")}>
         <div
-          className={cn(
-            "mx-auto flex h-14 items-center justify-between gap-4 border transition-all duration-300 ease-out",
-            scrolled
-              ? "rounded-2xl border-zinc-200/70 bg-white/80 px-4 shadow-lg shadow-black/5 backdrop-blur-xl backdrop-saturate-150 dark:border-[#1f1f1f] dark:bg-black/70"
-              : "rounded-none border-transparent bg-white px-4 sm:px-6 lg:px-8 dark:bg-black",
-          )}
+          className="liquid-glass-bar relative mx-auto flex h-14 items-center justify-between gap-4 overflow-hidden rounded-2xl px-4 sm:px-6 transition-all duration-300 ease-out"
         >
+          {/* Dynamic liquid blobs & glow contained EXCLUSIVELY INSIDE the header */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl" aria-hidden>
+            {/* Ambient soft iridescent wash */}
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-100/35 via-purple-50/25 to-sky-100/30 opacity-100 dark:opacity-0" />
+
+            {/* Liquid Blob 1: Left */}
+            <div
+              className="liquid-blob-anim-1 absolute -top-8 left-6 h-28 w-48 rounded-full bg-gradient-to-r from-indigo-500/35 via-violet-500/25 to-purple-500/20 blur-[28px] dark:from-indigo-600/25 dark:via-violet-600/20 dark:to-purple-700/15"
+            />
+            {/* Liquid Blob 2: Right */}
+            <div
+              className="liquid-blob-anim-2 absolute -bottom-8 right-10 h-28 w-52 rounded-full bg-gradient-to-r from-cyan-400/35 via-sky-500/25 to-blue-500/20 blur-[28px] dark:from-sky-500/25 dark:via-blue-600/20 dark:to-teal-500/15"
+            />
+            {/* Liquid Blob 3: Center */}
+            <div
+              className="liquid-blob-anim-3 absolute top-0 left-1/2 -translate-x-1/2 h-24 w-36 rounded-full bg-gradient-to-r from-fuchsia-500/25 to-pink-500/20 blur-[25px] dark:from-fuchsia-600/20 dark:to-pink-600/15"
+            />
+          </div>
+
+          {/* Top specular reflection line */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.2px] bg-gradient-to-r from-transparent via-white/95 dark:via-white/35 to-transparent" />
+
+          {/* Shimmer sweep effect */}
+          <div className="pointer-events-none absolute -inset-full liquid-shimmer opacity-30 dark:opacity-15" />
+
           {/* Logo */}
-          <Logo onSecretTap={() => navigate("/login?mode=admin")} />
+          <div className="relative z-10">
+            <Logo onSecretTap={() => navigate("/login?mode=admin")} />
+          </div>
 
           {/* Nav — desktop center */}
-          <nav className="relative hidden items-center gap-0.5 md:flex" aria-label="Main">
+          <nav className="relative z-10 hidden items-center gap-0.5 md:flex" aria-label="Main">
             {menu.map((m) => renderLink(m))}
           </nav>
 
           {/* Actions — right */}
-          <div className="flex items-center gap-1">
+          <div className="relative z-10 flex items-center gap-1">
             {/* Search */}
             <div ref={searchRef} className="hidden items-center sm:flex">
               {searchOpen ? (
@@ -251,28 +273,54 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer with liquid glass styling */}
       {open && (
         <>
-          <div className="fixed inset-0 z-[60] bg-black/50 md:hidden" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm md:hidden" onClick={() => setOpen(false)} />
           <div
-            className="fixed right-0 top-0 z-[70] flex w-72 max-w-[85vw] flex-col overflow-hidden rounded-l-2xl border-l border-zinc-200 bg-white shadow-2xl animate-slide-in-right dark:border-[#1a1a1a] dark:bg-[#050505] md:hidden"
+            className="liquid-glass-bar fixed right-0 top-0 z-[70] flex w-72 max-w-[85vw] flex-col overflow-hidden rounded-l-3xl border-l border-white/80 shadow-2xl animate-slide-in-right md:hidden"
             style={{ bottom: "calc(env(safe-area-inset-bottom, 8px) + 88px)" }}
           >
-            <div className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-100 px-4 dark:border-[#1a1a1a]">
+            {/* Dynamic liquid blobs & glow contained EXCLUSIVELY INSIDE the hamburger menu */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-l-3xl" aria-hidden>
+              {/* Ambient soft iridescent wash */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-100/40 via-purple-50/30 to-sky-100/35 opacity-100 dark:opacity-0" />
+
+              {/* Liquid Blob 1: Top Right */}
+              <div
+                className="liquid-blob-anim-1 absolute -top-10 -right-10 h-44 w-44 rounded-full bg-gradient-to-tr from-indigo-500/40 via-violet-500/30 to-purple-600/20 blur-[32px] dark:from-indigo-600/30 dark:via-violet-600/20 dark:to-purple-700/15"
+              />
+              {/* Liquid Blob 2: Bottom Left */}
+              <div
+                className="liquid-blob-anim-2 absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-gradient-to-br from-cyan-400/40 via-sky-500/30 to-blue-600/20 blur-[32px] dark:from-sky-500/30 dark:via-blue-600/20 dark:to-teal-500/15"
+              />
+              {/* Liquid Blob 3: Middle Right */}
+              <div
+                className="liquid-blob-anim-3 absolute top-1/2 -right-8 -translate-y-1/2 h-40 w-40 rounded-full bg-gradient-to-r from-fuchsia-500/30 via-pink-500/25 to-rose-400/15 blur-[28px] dark:from-fuchsia-600/20 dark:to-rose-600/15"
+              />
+            </div>
+
+            {/* Specular gloss top light reflection */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/95 dark:via-white/35 to-transparent" />
+
+            {/* Shimmer sweep effect */}
+            <div className="pointer-events-none absolute -inset-full liquid-shimmer opacity-35 dark:opacity-15" />
+
+            {/* Drawer header */}
+            <div className="relative z-10 flex h-16 shrink-0 items-center justify-between border-b border-white/60 px-4 dark:border-white/10">
               <div onClick={() => setOpen(false)}>
                 <Logo />
               </div>
-              <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#151515]" aria-label="Close">
+              <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-zinc-500 hover:bg-white/60 dark:text-zinc-400 dark:hover:bg-white/10" aria-label="Close">
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <nav className="flex-1 space-y-0.5 overflow-y-auto p-3" aria-label="Mobile">
+            <nav className="relative z-10 flex-1 space-y-0.5 overflow-y-auto p-3" aria-label="Mobile">
               {menu.map((m) => renderLink(m, true))}
             </nav>
-            <div className="shrink-0 border-t border-zinc-100 px-4 py-3 dark:border-[#1a1a1a]">
+            <div className="relative z-10 shrink-0 border-t border-white/60 px-4 py-3 dark:border-white/10">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">Dark mode</span>
+                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Dark mode</span>
                 <button
                   onClick={toggle}
                   role="switch"
@@ -293,25 +341,25 @@ export function Navbar() {
               </div>
             </div>
             {user ? (
-              <div className="shrink-0 border-t border-zinc-100 p-3 dark:border-[#1a1a1a] space-y-1">
+              <div className="relative z-10 shrink-0 border-t border-white/60 p-3 dark:border-white/10 space-y-1">
                 <div className="flex items-center gap-2.5 px-2 py-1 mb-1">
                   <Avatar name={user.full_name} src={user.avatar_url} size="sm" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-semibold text-zinc-900 dark:text-white">{user.full_name}</p>
-                    <p className="truncate text-[11px] text-zinc-400 dark:text-zinc-600">{user.email}</p>
+                    <p className="truncate text-[11px] text-zinc-500 dark:text-zinc-400">{user.email}</p>
                   </div>
                 </div>
                 <Link
                   to="/dashboard"
                   onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-[#151515] dark:hover:text-white"
+                  className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-white/60 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
                   <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard
                 </Link>
                 <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-[#151515] dark:hover:text-white"
+                  className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-white/60 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
                   <User className="h-3.5 w-3.5" /> Profile
                 </Link>
@@ -319,7 +367,7 @@ export function Navbar() {
                   <Link
                     to="/admin"
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-[#151515] dark:hover:text-white"
+                    className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-white/60 dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white"
                   >
                     <Settings className="h-3.5 w-3.5" /> Admin panel
                   </Link>
@@ -329,20 +377,20 @@ export function Navbar() {
                     setOpen(false);
                     signOut().then(() => navigate("/"));
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50/80 dark:hover:bg-red-950/40"
                 >
                   <LogOut className="h-3.5 w-3.5" /> Sign out
                 </button>
               </div>
             ) : (
-              <div className="flex shrink-0 gap-2 border-t border-zinc-100 p-3 dark:border-[#1a1a1a]">
+              <div className="relative z-10 flex shrink-0 gap-2 border-t border-white/60 p-3 dark:border-white/10">
                 <Link
                   to="/login"
                   onClick={() => {
                     setOpen(false);
                     setMenuOpen(false);
                   }}
-                  className="flex-1 inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white/70 px-3 py-2.5 text-sm font-medium text-zinc-800 transition hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  className="flex-1 inline-flex items-center justify-center rounded-xl border border-white/80 bg-white/70 px-3 py-2.5 text-sm font-medium text-zinc-800 shadow-xs transition hover:bg-white/90 dark:border-white/15 dark:bg-white/10 dark:text-zinc-100 dark:hover:bg-white/20"
                 >
                   <span className="header-zoom-text">Log in</span>
                 </Link>

@@ -20,9 +20,34 @@ export function BottomTabs() {
       className="fixed inset-x-0 bottom-0 z-50 px-3 md:hidden"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 10px)" }}
     >
-      <div className="relative mx-auto flex h-14 max-w-md animate-slide-up items-stretch rounded-full border border-zinc-200/70 bg-white/80 px-2 shadow-[0_6px_24px_-10px_rgba(15,23,42,0.25)] backdrop-blur-2xl dark:border-white/10 dark:bg-zinc-900/70 dark:shadow-[0_6px_24px_-10px_rgba(0,0,0,0.7)]">
-          {TABS.map((t) => (
-            <NavLink key={t.to} to={t.to} end={t.to === "/"} className="relative flex flex-1 flex-col items-center justify-center transition-transform duration-150 active:scale-90">
+      <div className="liquid-glass-bar relative mx-auto flex h-14 max-w-md animate-slide-up items-stretch overflow-hidden rounded-full px-2">
+        {/* Dynamic liquid blobs & glow contained EXCLUSIVELY INSIDE bottom nav */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full" aria-hidden>
+          {/* Ambient soft iridescent wash */}
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-100/35 via-purple-50/25 to-sky-100/30 opacity-100 dark:opacity-0" />
+
+          {/* Liquid Blob 1: Left */}
+          <div
+            className="liquid-blob-anim-1 absolute -top-8 -left-8 h-28 w-28 rounded-full bg-gradient-to-r from-indigo-500/40 via-violet-500/30 to-purple-500/25 blur-[22px] dark:from-indigo-600/30 dark:via-violet-600/20 dark:to-purple-700/15"
+          />
+          {/* Liquid Blob 2: Right */}
+          <div
+            className="liquid-blob-anim-2 absolute -bottom-8 -right-8 h-28 w-32 rounded-full bg-gradient-to-r from-cyan-400/40 via-sky-500/30 to-blue-500/25 blur-[22px] dark:from-sky-500/30 dark:via-blue-600/20 dark:to-teal-500/15"
+          />
+          {/* Liquid Blob 3: Center */}
+          <div
+            className="liquid-blob-anim-3 absolute top-0 left-1/2 -translate-x-1/2 h-20 w-24 rounded-full bg-gradient-to-r from-fuchsia-500/30 to-pink-500/25 blur-[20px] dark:from-fuchsia-600/20 dark:to-pink-600/15"
+          />
+        </div>
+
+        {/* Top specular reflection line */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.2px] bg-gradient-to-r from-transparent via-white/95 dark:via-white/35 to-transparent" />
+
+        {/* Shimmer sweep effect */}
+        <div className="pointer-events-none absolute -inset-full liquid-shimmer opacity-35 dark:opacity-15" />
+
+        {TABS.map((t) => (
+          <NavLink key={t.to} to={t.to} end={t.to === "/"} className="relative z-10 flex flex-1 flex-col items-center justify-center transition-transform duration-150 active:scale-90">
               {({ isActive }) => (
                 <>
                   <span
