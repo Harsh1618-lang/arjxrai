@@ -69,7 +69,7 @@ export function PublicLayout() {
   const maintenance = settings?.general.maintenance_mode ?? false;
 
   return (
-    <div className="text-hover-fx flex min-h-screen flex-col overflow-x-hidden bg-white text-zinc-900 dark:bg-black dark:text-zinc-100">
+    <div className="text-hover-fx flex min-h-screen flex-col bg-white text-zinc-900 dark:bg-black dark:text-zinc-100">
       <ScrollToTop />
       <OfflineBanner />
       <AnnouncementBar />
@@ -83,7 +83,7 @@ export function PublicLayout() {
           </Link>
         </div>
       )}
-      <main className="flex-1 pb-20 md:pb-0">
+      <main className="flex-1 overflow-x-clip pb-20 md:pb-0">
         {maintenance && !isAdmin && !loading ? (
           <MaintenanceScreen message={settings?.general.maintenance_message ?? ""} />
         ) : (
