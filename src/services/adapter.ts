@@ -26,7 +26,74 @@ export interface DataAdapter {
 /* Local adapter — used when Supabase is not configured                */
 /* ------------------------------------------------------------------ */
 
-const PREFIX = "srd_db_";
+export const PREFIX = "srd_db_";
+export const DB_CHANGE_EVENT = "srd_db_change";
+export const DB_SYNC_CHANNEL = "srd_sync_channel";
+
+let syncChannel: BroadcastChannel | null = null;
+if (typeof window !== "undefined" && "BroadcastChannel" in window) {
+  try {
+    syncChannel = new BroadcastChannel(DB_SYNC_CHANNEL);
+  } catch {
+    syncChannel = null;
+  }
+}
+
+/**
+ * Notifies all tabs, windows, and in-memory listeners that a table has changed.
+ */
+export function notifyDbChange(table: string) {
+  if (typeof window === "undefined") return;
+  const timestamp = Date.now();
+  try {
+    window.dispatchEvent(new CustomEvent(DB_CHANGE_EVENT, { detail: { table, timestamp } }));
+  } catch {
+    /* ignore */
+  }
+  try {
+    syncChannel?.postMessage({ table, timestamp });
+  } catch {
+    /* ignore */
+  }
+  try {
+    localStorage.setItem("srd_last_sync", `${table}:${timestamp}`);
+  } catch {
+    /* ignore */
+  }
+}
+
+/**
+ * Subscribes to real-time database modifications from any tab or window.
+ */
+export function subscribeToDbChanges(callback: (table: string) => void) {
+  if (typeof window === "undefined") return () => {};
+
+  const handleCustom = (e: Event) => {
+    const detail = (e as CustomEvent<{ table: string }>).detail;
+    if (detail?.table) callback(detail.table);
+  };
+
+  const handleStorage = (e: StorageEvent) => {
+    if (e.key?.startsWith(PREFIX) || e.key === "srd_last_sync") {
+      const table = e.key.replace(PREFIX, "").split(":")[0];
+      callback(table || "all");
+    }
+  };
+
+  const handleBroadcast = (e: MessageEvent<{ table?: string }>) => {
+    if (e.data?.table) callback(e.data.table);
+  };
+
+  window.addEventListener(DB_CHANGE_EVENT, handleCustom);
+  window.addEventListener("storage", handleStorage);
+  syncChannel?.addEventListener("message", handleBroadcast);
+
+  return () => {
+    window.removeEventListener(DB_CHANGE_EVENT, handleCustom);
+    window.removeEventListener("storage", handleStorage);
+    syncChannel?.removeEventListener("message", handleBroadcast);
+  };
+}
 
 class LocalAdapter implements DataAdapter {
   readonly mode = "local" as const;
@@ -39,13 +106,16 @@ class LocalAdapter implements DataAdapter {
       /* fallthrough to seed */
     }
     const seed = (SEED_TABLES[table] ?? []) as T[];
-    this.write(table, seed);
+    this.write(table, seed, false);
     return seed;
   }
 
-  private write<T>(table: string, rows: T[]) {
+  private write<T>(table: string, rows: T[], notify = true) {
     try {
       localStorage.setItem(PREFIX + table, JSON.stringify(rows));
+      if (notify) {
+        notifyDbChange(table);
+      }
     } catch {
       /* ignore quota errors */
     }
@@ -155,16 +225,21 @@ class SupabaseAdapter implements DataAdapter {
     if (keyValue) {
       const { data, error } = await this.client.from(table).update(payload).eq(conflictKey, keyValue as string).select().maybeSingle();
       if (error) throw new Error(error.message);
-      if (data) return data as T;
+      if (data) {
+        notifyDbChange(table);
+        return data as T;
+      }
     }
     const { data, error } = await this.client.from(table).insert(payload).select().single();
     if (error) throw new Error(error.message);
+    notifyDbChange(table);
     return data as T;
   }
 
   async remove(table: string, id: string, key = "id"): Promise<void> {
     const { error } = await this.client.from(table).delete().eq(key, id);
     if (error) throw new Error(error.message);
+    notifyDbChange(table);
   }
 
   async replaceAll<T>(table: string, rows: T[]): Promise<void> {
@@ -175,6 +250,7 @@ class SupabaseAdapter implements DataAdapter {
       const { error } = await this.client.from(table).insert(rows as Row[]);
       if (error) throw new Error(error.message);
     }
+    notifyDbChange(table);
   }
 
   async incrementViews(courseId: string): Promise<void> {
@@ -185,3 +261,41 @@ class SupabaseAdapter implements DataAdapter {
 
 export const db: DataAdapter = supabase ? new SupabaseAdapter() : new LocalAdapter();
 export const isDemoMode = db.mode === "local";
+
+// Set up Supabase Realtime channel to receive updates from other users or admin actions in real-time
+if (supabase) {
+  try {
+    const channel = supabase.channel("srd_realtime_sync");
+
+    channel.on(
+      "postgres_changes",
+      { event: "*", schema: "public" },
+      (payload) => {
+        if (payload?.table) {
+          notifyDbChange(payload.table);
+        }
+      }
+    );
+
+    const coreTables = ["settings", "courses", "categories", "lessons", "pdfs", "resources", "pages", "media", "activity_logs"];
+    for (const tbl of coreTables) {
+      channel.on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: tbl },
+        () => {
+          notifyDbChange(tbl);
+        }
+      );
+    }
+
+    channel.subscribe((status, err) => {
+      if (err) {
+        console.warn("[Supabase Realtime] subscription issue:", err);
+      } else if (status === "SUBSCRIBED") {
+        console.log("[Supabase Realtime] Connected and listening for real-time updates!");
+      }
+    });
+  } catch (err) {
+    console.warn("[Supabase Realtime] failed to start listener:", err);
+  }
+}

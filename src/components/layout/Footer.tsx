@@ -13,8 +13,26 @@ export function Footer() {
   const newsletter = useNewsletter();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
-  if (!settings) return null;
-  const { footer, general } = settings;
+
+  const footer = settings?.footer ?? {
+    about: "SRD Learn is an open, modern learning platform offering structured video courses, handwritten notes, PDFs, and roadmaps.",
+    copyright: "© {year} SRD Learn. All rights reserved.",
+    links: [
+      { label: "Courses", href: "/courses" },
+      { label: "Categories", href: "/categories" },
+      { label: "About", href: "/about" },
+      { label: "FAQ", href: "/faq" },
+      { label: "Contact", href: "/contact" },
+    ],
+    telegram: "https://t.me",
+    youtube: "https://youtube.com",
+    github: "https://github.com",
+    email: "contact@srdlearn.com",
+    contact: "Have questions or need help? Reach out via our official community channels or email.",
+    show_privacy: true,
+    show_terms: true,
+  };
+  const general = settings?.general ?? { site_name: "SRD Learn" };
   const year = new Date().getFullYear();
 
   const subscribe = async (e: FormEvent) => {
@@ -38,7 +56,7 @@ export function Footer() {
   ].filter((s) => s.href);
 
   return (
-    <footer className="liquid-glass-bar relative overflow-hidden border-t border-white/80 dark:border-white/10">
+    <footer className="liquid-glass-bar relative overflow-hidden border-t border-white/80 bg-white/90 dark:border-white/10 dark:bg-black/90">
       {/* Dynamic liquid blobs & glow contained EXCLUSIVELY INSIDE footer */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
         {/* Ambient soft iridescent wash */}
@@ -64,7 +82,7 @@ export function Footer() {
       {/* Shimmer sweep effect */}
       <div className="pointer-events-none absolute -inset-full liquid-shimmer opacity-30 dark:opacity-12" />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-12 pb-28 sm:px-6 sm:py-14 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-10 pb-32 sm:px-6 sm:py-14 lg:px-8">
         <div className="grid gap-12 md:grid-cols-4">
 
           {/* Brand */}

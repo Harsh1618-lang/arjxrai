@@ -135,7 +135,9 @@ export function AdminLayout() {
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-zinc-950/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 max-w-[85vw] bg-white shadow-2xl animate-slide-in-left dark:bg-zinc-900">{sidebar}</aside>
+          <aside className="absolute inset-y-0 right-0 w-72 max-w-[85vw] border-l border-zinc-200 bg-white shadow-2xl animate-slide-in-right dark:border-zinc-800 dark:bg-zinc-900" style={{ right: 0 }}>
+            {sidebar}
+          </aside>
         </div>
       )}
 

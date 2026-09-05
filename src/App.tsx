@@ -1,6 +1,6 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ToastProvider } from "@/hooks/useToast";
 import { ThemeProvider } from "@/hooks/useTheme";
@@ -10,6 +10,8 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { RequireAdmin, RequireAuth } from "@/components/common";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageLoader } from "@/components/ui";
+import { subscribeToDbChanges } from "@/services/adapter";
+import { qk } from "@/hooks/queries";
 
 /* Route-level code splitting */
 const Home = lazy(() => import("@/pages/Home"));
@@ -39,9 +41,52 @@ const GeneralSettingsCms = lazy(() => import("@/pages/admin/SiteCms").then((m) =
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { staleTime: 60_000, retry: 1, refetchOnWindowFocus: false },
+    queries: {
+      staleTime: 0,
+      retry: 1,
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchInterval: 10_000,
+      refetchIntervalInBackground: false,
+    },
   },
 });
+
+function LiveSyncManager() {
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    return subscribeToDbChanges((table) => {
+      if (table === "settings") {
+        qc.invalidateQueries({ queryKey: qk.settings, refetchType: "all" });
+      } else if (table === "courses") {
+        qc.invalidateQueries({ queryKey: ["courses"], refetchType: "all" });
+        qc.invalidateQueries({ queryKey: ["course"], refetchType: "all" });
+        qc.invalidateQueries({ queryKey: ["course-id"], refetchType: "all" });
+        qc.invalidateQueries({ queryKey: qk.stats, refetchType: "all" });
+      } else if (table === "categories") {
+        qc.invalidateQueries({ queryKey: qk.categories, refetchType: "all" });
+        qc.invalidateQueries({ queryKey: ["courses"], refetchType: "all" });
+      } else if (table === "lessons" || table === "pdfs" || table === "resources") {
+        qc.invalidateQueries({ queryKey: ["course-content"], refetchType: "all" });
+        qc.invalidateQueries({ queryKey: ["courses"], refetchType: "all" });
+        qc.invalidateQueries({ queryKey: ["course"], refetchType: "all" });
+      } else if (table === "pages") {
+        qc.invalidateQueries({ queryKey: qk.pages, refetchType: "all" });
+        qc.invalidateQueries({ queryKey: ["page"], refetchType: "all" });
+      } else if (table === "media") {
+        qc.invalidateQueries({ queryKey: qk.media, refetchType: "all" });
+      } else if (table === "profiles" || table === "users") {
+        qc.invalidateQueries({ queryKey: qk.users, refetchType: "all" });
+      } else {
+        qc.invalidateQueries({ refetchType: "all" });
+      }
+    });
+  }, [qc]);
+
+  return null;
+}
 
 const KNOWN_ROUTES = ["courses", "categories", "login", "register", "about", "contact", "faq", "privacy", "terms", "disclaimer", "p", "dashboard", "profile", "admin"];
 
@@ -68,6 +113,7 @@ function detectBasename(): string {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <LiveSyncManager />
       <ToastProvider>
         <AuthProvider>
           <ThemeProvider>

@@ -279,7 +279,8 @@ export function Navbar() {
         <div className="md:hidden">
           <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-xs animate-fade-in" onClick={() => setOpen(false)} />
           <div
-            className="liquid-glass-bar fixed inset-y-0 right-0 z-[70] flex h-full w-72 max-w-[85vw] flex-col overflow-hidden rounded-l-3xl border-l border-white/80 shadow-2xl animate-slide-in-right"
+            className="liquid-glass-bar fixed inset-y-0 right-0 z-[70] flex h-full w-72 max-w-[85vw] flex-col overflow-hidden rounded-l-3xl border-l border-white/80 bg-white/95 shadow-2xl animate-slide-in-right dark:bg-zinc-950/95"
+            style={{ right: 0, left: "auto" }}
           >
             {/* Dynamic liquid blobs & glow contained EXCLUSIVELY INSIDE the hamburger menu */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-l-3xl" aria-hidden>
