@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { GraduationCap, LayoutDashboard, LogOut, Menu, Moon, Search, Settings, Sun, User, X } from "lucide-react";
 import { useSettings } from "@/hooks/queries";
 import { useAuth } from "@/hooks/useAuth";
@@ -49,6 +49,7 @@ export function Navbar() {
   const { user, isAdmin, signOut } = useAuth();
   const { mode, toggle } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -56,6 +57,13 @@ export function Navbar() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Automatically close mobile menu drawer and overlays on route change
+  useEffect(() => {
+    setOpen(false);
+    setMenuOpen(false);
+    setSearchOpen(false);
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -248,7 +256,9 @@ export function Navbar() {
             style={{ bottom: "calc(env(safe-area-inset-bottom, 8px) + 88px)" }}
           >
             <div className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-100 px-4 dark:border-[#1a1a1a]">
-              <Logo />
+              <div onClick={() => setOpen(false)}>
+                <Logo />
+              </div>
               <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#151515]" aria-label="Close">
                 <X className="h-4 w-4" />
               </button>
@@ -278,11 +288,53 @@ export function Navbar() {
                 </button>
               </div>
             </div>
-            {!user && (
+            {user ? (
+              <div className="shrink-0 border-t border-zinc-100 p-3 dark:border-[#1a1a1a] space-y-1">
+                <div className="flex items-center gap-2.5 px-2 py-1 mb-1">
+                  <Avatar name={user.full_name} src={user.avatar_url} size="sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-semibold text-zinc-900 dark:text-white">{user.full_name}</p>
+                    <p className="truncate text-[11px] text-zinc-400 dark:text-zinc-600">{user.email}</p>
+                  </div>
+                </div>
+                <Link
+                  to="/dashboard"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-[#151515] dark:hover:text-white"
+                >
+                  <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard
+                </Link>
+                <Link
+                  to="/profile"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-[#151515] dark:hover:text-white"
+                >
+                  <User className="h-3.5 w-3.5" /> Profile
+                </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-[#151515] dark:hover:text-white"
+                  >
+                    <Settings className="h-3.5 w-3.5" /> Admin panel
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    signOut().then(() => navigate("/"));
+                  }}
+                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
+                >
+                  <LogOut className="h-3.5 w-3.5" /> Sign out
+                </button>
+              </div>
+            ) : (
               <div className="flex shrink-0 gap-2 border-t border-zinc-100 p-3 dark:border-[#1a1a1a]">
-                <LinkButton to="/login" variant="outline" size="md" className="flex-1">Log in</LinkButton>
+                <LinkButton to="/login" variant="outline" size="md" className="flex-1" onClick={() => setOpen(false)}>Log in</LinkButton>
                 {settings?.general.registration_enabled && (
-                  <LinkButton to="/register" size="md" className="flex-1">Get started</LinkButton>
+                  <LinkButton to="/register" size="md" className="flex-1" onClick={() => setOpen(false)}>Get started</LinkButton>
                 )}
               </div>
             )}
