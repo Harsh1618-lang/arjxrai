@@ -237,7 +237,7 @@ function ContentManager({ courseId, tab, setTab }: { courseId: string; tab: Tab;
         ]}
       />
       <div className="mt-5">
-        {isLoading ? (
+        {isLoading && !data ? (
           <PageLoader />
         ) : tab === "lessons" ? (
           <LessonsPanel courseId={courseId} items={lessons} />

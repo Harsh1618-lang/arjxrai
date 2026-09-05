@@ -24,7 +24,6 @@ import {
   X,
 } from "lucide-react";
 import { Logo } from "@/components/layout/Navbar";
-import { LiquidBackground } from "@/components/layout/LiquidBackground";
 import { ChangePasswordModal } from "@/components/ChangePasswordModal";
 import { ScrollToTop } from "@/components/common";
 import { Avatar, PageLoader } from "@/components/ui";
@@ -127,8 +126,7 @@ export function AdminLayout() {
   );
 
   return (
-    <div className="relative min-h-screen bg-transparent text-zinc-900 dark:text-zinc-100">
-      <LiquidBackground />
+    <div className="admin-root relative min-h-screen bg-zinc-50 text-zinc-900 dark:bg-[#0c0c0e] dark:text-zinc-100">
       <ScrollToTop />
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 lg:block">{sidebar}</aside>
 

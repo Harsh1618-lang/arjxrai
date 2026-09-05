@@ -382,6 +382,26 @@ header .header-zoom-text:hover {
     inset 0 1.5px 1.2px 0 rgba(255, 255, 255, 0.25);
 }
 
+/* Admin panel stability: never use backdrop blur or transform movements on admin cards/forms */
+.admin-root .liquid-course-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark .admin-root .liquid-course-card {
+  background-color: #121215 !important;
+  border: 1px solid #27272a !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-root .liquid-course-card:hover {
+  transform: none !important;
+}
+
 @keyframes liquid-shimmer {
   0% { transform: translateX(-120%) rotate(25deg); }
   50%, 100% { transform: translateX(250%) rotate(25deg); }

@@ -271,30 +271,3 @@ class SupabaseAdapter implements DataAdapter {
 
 export const db: DataAdapter = supabase ? new SupabaseAdapter() : new LocalAdapter();
 export const isDemoMode = db.mode === "local";
-
-// Set up Supabase Realtime channel to receive updates from other users or admin actions in real-time
-if (supabase) {
-  try {
-    const channel = supabase.channel("srd_realtime_sync");
-
-    channel.on(
-      "postgres_changes",
-      { event: "*", schema: "public" },
-      (payload) => {
-        if (payload?.table) {
-          notifyDbChange(payload.table);
-        }
-      }
-    );
-
-    channel.subscribe((status, err) => {
-      if (err) {
-        console.warn("[Supabase Realtime] subscription issue:", err);
-      } else if (status === "SUBSCRIBED") {
-        console.log("[Supabase Realtime] Connected and listening for real-time updates!");
-      }
-    });
-  } catch (err) {
-    console.warn("[Supabase Realtime] failed to start listener:", err);
-  }
-}

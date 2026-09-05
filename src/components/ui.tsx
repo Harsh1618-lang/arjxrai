@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useId, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { Loader2, X } from "lucide-react";
 import { cn, initials, isExternal } from "@/lib/utils";
@@ -325,29 +326,48 @@ export function Modal({ open, onClose, title, description, children, footer, siz
     };
   }, [open, onClose]);
 
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-[90] flex items-end justify-center sm:items-center" role="dialog" aria-modal="true" aria-label={title}>
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={onClose} />
+  if (!open || typeof document === "undefined") return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex min-h-screen items-center justify-center p-3 sm:p-6 overflow-y-auto"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+    >
+      <div
+        className="fixed inset-0 bg-black/75 backdrop-blur-sm animate-fade-in"
+        onClick={onClose}
+      />
       <div
         className={cn(
-          "relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl animate-slide-up dark:bg-[#0d0d0d] dark:border dark:border-[#1f1f1f] sm:rounded-2xl",
-          { sm: "sm:max-w-md", md: "sm:max-w-lg", lg: "sm:max-w-2xl" }[size],
+          "relative z-10 my-auto flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl animate-slide-up border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800",
+          { sm: "max-w-md", md: "max-w-lg", lg: "max-w-2xl" }[size],
         )}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-zinc-100 px-5 py-4 dark:border-[#1a1a1a]">
+        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-zinc-100 px-5 py-4 dark:border-zinc-800">
           <div>
             <h3 className="text-base font-semibold text-zinc-900 dark:text-white">{title}</h3>
-            {description && <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-500">{description}</p>}
+            {description && <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">{description}</p>}
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-[#1a1a1a] dark:hover:text-zinc-200" aria-label="Close">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+            aria-label="Close"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
-        {footer && <div className="flex justify-end gap-2 border-t border-zinc-100 px-5 py-3 dark:border-[#1a1a1a]">{footer}</div>}
+        <div className="flex-1 overflow-y-auto px-5 py-4 overscroll-contain">{children}</div>
+        {footer && (
+          <div className="flex shrink-0 items-center justify-end gap-2.5 border-t border-zinc-100 bg-zinc-50/90 px-5 py-3.5 dark:border-zinc-800 dark:bg-zinc-900/90">
+            {footer}
+          </div>
+        )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
