@@ -115,13 +115,13 @@ export default function Home() {
                 fetchPriority="high"
               />
               {/* Free badge */}
-              <div className="liquid-course-card absolute -bottom-5 -left-5 flex items-center gap-3 rounded-2xl px-4 py-3 shadow-xl">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10">
-                  <Users className="h-4 w-4 text-emerald-500" />
+              <div className="liquid-course-card absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex w-max max-w-[90%] items-center gap-3 rounded-2xl border border-white/80 bg-white/85 px-4 py-2.5 shadow-xl backdrop-blur-md dark:border-white/15 dark:bg-zinc-900/85 sm:bottom-5 sm:px-5 sm:py-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                  <Users className="h-4.5 w-4.5" />
                 </span>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-semibold text-zinc-900 dark:text-white">100% Free</p>
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400">No paywalls, ever</p>
+                  <p className="text-[11px] text-zinc-600 dark:text-zinc-400">No paywalls, ever</p>
                 </div>
               </div>
             </div>
