@@ -39,27 +39,37 @@ if (typeof window !== "undefined" && "BroadcastChannel" in window) {
   }
 }
 
+const pendingTimers = new Map<string, number>();
+
 /**
  * Notifies all tabs, windows, and in-memory listeners that a table has changed.
  */
 export function notifyDbChange(table: string) {
   if (typeof window === "undefined") return;
-  const timestamp = Date.now();
-  try {
-    window.dispatchEvent(new CustomEvent(DB_CHANGE_EVENT, { detail: { table, timestamp } }));
-  } catch {
-    /* ignore */
+  // Debounce per table to avoid rapid-fire UI re-renders and input disruption
+  if (pendingTimers.has(table)) {
+    window.clearTimeout(pendingTimers.get(table));
   }
-  try {
-    syncChannel?.postMessage({ table, timestamp });
-  } catch {
-    /* ignore */
-  }
-  try {
-    localStorage.setItem("srd_last_sync", `${table}:${timestamp}`);
-  } catch {
-    /* ignore */
-  }
+  const timer = window.setTimeout(() => {
+    pendingTimers.delete(table);
+    const timestamp = Date.now();
+    try {
+      window.dispatchEvent(new CustomEvent(DB_CHANGE_EVENT, { detail: { table, timestamp } }));
+    } catch {
+      /* ignore */
+    }
+    try {
+      syncChannel?.postMessage({ table, timestamp });
+    } catch {
+      /* ignore */
+    }
+    try {
+      localStorage.setItem("srd_last_sync", `${table}:${timestamp}`);
+    } catch {
+      /* ignore */
+    }
+  }, 150);
+  pendingTimers.set(table, timer);
 }
 
 /**
@@ -276,17 +286,6 @@ if (supabase) {
         }
       }
     );
-
-    const coreTables = ["settings", "courses", "categories", "lessons", "pdfs", "resources", "pages", "media", "activity_logs"];
-    for (const tbl of coreTables) {
-      channel.on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: tbl },
-        () => {
-          notifyDbChange(tbl);
-        }
-      );
-    }
 
     channel.subscribe((status, err) => {
       if (err) {

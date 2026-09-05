@@ -42,13 +42,11 @@ const GeneralSettingsCms = lazy(() => import("@/pages/admin/SiteCms").then((m) =
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0,
+      staleTime: 30_000,
       retry: 1,
-      refetchOnWindowFocus: true,
+      refetchOnWindowFocus: false,
       refetchOnMount: true,
       refetchOnReconnect: true,
-      refetchInterval: 10_000,
-      refetchIntervalInBackground: false,
     },
   },
 });
@@ -59,28 +57,28 @@ function LiveSyncManager() {
   useEffect(() => {
     return subscribeToDbChanges((table) => {
       if (table === "settings") {
-        qc.invalidateQueries({ queryKey: qk.settings, refetchType: "all" });
+        qc.invalidateQueries({ queryKey: qk.settings });
       } else if (table === "courses") {
-        qc.invalidateQueries({ queryKey: ["courses"], refetchType: "all" });
-        qc.invalidateQueries({ queryKey: ["course"], refetchType: "all" });
-        qc.invalidateQueries({ queryKey: ["course-id"], refetchType: "all" });
-        qc.invalidateQueries({ queryKey: qk.stats, refetchType: "all" });
+        qc.invalidateQueries({ queryKey: ["courses"] });
+        qc.invalidateQueries({ queryKey: ["course"] });
+        qc.invalidateQueries({ queryKey: ["course-id"] });
+        qc.invalidateQueries({ queryKey: qk.stats });
       } else if (table === "categories") {
-        qc.invalidateQueries({ queryKey: qk.categories, refetchType: "all" });
-        qc.invalidateQueries({ queryKey: ["courses"], refetchType: "all" });
+        qc.invalidateQueries({ queryKey: qk.categories });
+        qc.invalidateQueries({ queryKey: ["courses"] });
       } else if (table === "lessons" || table === "pdfs" || table === "resources") {
-        qc.invalidateQueries({ queryKey: ["course-content"], refetchType: "all" });
-        qc.invalidateQueries({ queryKey: ["courses"], refetchType: "all" });
-        qc.invalidateQueries({ queryKey: ["course"], refetchType: "all" });
+        qc.invalidateQueries({ queryKey: ["course-content"] });
+        qc.invalidateQueries({ queryKey: ["courses"] });
+        qc.invalidateQueries({ queryKey: ["course"] });
       } else if (table === "pages") {
-        qc.invalidateQueries({ queryKey: qk.pages, refetchType: "all" });
-        qc.invalidateQueries({ queryKey: ["page"], refetchType: "all" });
+        qc.invalidateQueries({ queryKey: qk.pages });
+        qc.invalidateQueries({ queryKey: ["page"] });
       } else if (table === "media") {
-        qc.invalidateQueries({ queryKey: qk.media, refetchType: "all" });
+        qc.invalidateQueries({ queryKey: qk.media });
       } else if (table === "profiles" || table === "users") {
-        qc.invalidateQueries({ queryKey: qk.users, refetchType: "all" });
-      } else {
-        qc.invalidateQueries({ refetchType: "all" });
+        qc.invalidateQueries({ queryKey: qk.users });
+      } else if (table === "activity_logs") {
+        qc.invalidateQueries({ queryKey: qk.logs });
       }
     });
   }, [qc]);

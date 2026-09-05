@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowDown, ArrowLeft, ArrowUp, ExternalLink, FileText, FolderOpen, Pencil, Plus, Save, Trash2, Video } from "lucide-react";
 import { Seo } from "@/lib/seo";
@@ -39,14 +39,23 @@ export default function CourseEditor() {
   const [tagsInput, setTagsInput] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
   const [tab, setTab] = useState<Tab>("lessons");
+  const loadedIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (course) {
+    if (isNew) {
+      if (loadedIdRef.current !== "new") {
+        loadedIdRef.current = "new";
+        setForm(emptyCourse);
+        setTagsInput("");
+        setSlugTouched(false);
+      }
+    } else if (course && loadedIdRef.current !== course.id) {
+      loadedIdRef.current = course.id;
       setForm(course);
       setTagsInput((course.tags ?? []).join(", "));
       setSlugTouched(true);
     }
-  }, [course]);
+  }, [isNew, course]);
 
   const set = <K extends keyof Course>(key: K, value: Course[K]) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -63,8 +72,8 @@ export default function CourseEditor() {
     }
   };
 
-  if (!isNew && isLoading) return <PageLoader />;
-  if (!isNew && !course) {
+  if (!isNew && isLoading && !course) return <PageLoader />;
+  if (!isNew && !course && !isLoading) {
     return (
       <div className="py-20 text-center">
         <p className="text-zinc-500">Course not found.</p>
@@ -76,23 +85,35 @@ export default function CourseEditor() {
   return (
     <div>
       <Seo title={isNew ? "New course" : `Edit · ${course?.title}`} noIndex />
-      <Link to="/admin/courses" className="mb-4 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-primary">
-        <ArrowLeft className="h-4 w-4" /> All courses
-      </Link>
+      <div className="mb-3 flex items-center justify-between">
+        <Link to="/admin/courses" className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-primary">
+          <ArrowLeft className="h-4 w-4" /> All courses
+        </Link>
+      </div>
       <PageHeader
         title={isNew ? "Create course" : "Edit course"}
         description={isNew ? "Fill in the details, save, then add lessons, PDFs and resources." : course?.title}
         actions={
-          !isNew &&
-          course && (
-            <Link to={`/courses/${course.slug}`} target="_blank" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
-              Preview <ExternalLink className="h-3.5 w-3.5" />
-            </Link>
-          )
+          <div className="flex flex-wrap items-center gap-2">
+            {!isNew && course && (
+              <Link to={`/courses/${course.slug}`} target="_blank" className="inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-primary hover:underline">
+                Preview <ExternalLink className="h-3.5 w-3.5" />
+              </Link>
+            )}
+            <Button
+              form="course-form"
+              type="submit"
+              size="md"
+              loading={save.isPending}
+              className="shadow-sm"
+            >
+              <Save className="h-4 w-4" /> {isNew ? "Create course" : "Save changes"}
+            </Button>
+          </div>
         }
       />
 
-      <form onSubmit={submit} className="grid gap-6 lg:grid-cols-3">
+      <form id="course-form" onSubmit={submit} className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
           <Card className="space-y-4 p-5">
             <Input
@@ -148,11 +169,43 @@ export default function CourseEditor() {
             <Input label="Tags" value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="javascript, beginner, frontend" hint="Comma separated." />
             <Input label="Instructor" value={form.instructor ?? ""} onChange={(e) => set("instructor", e.target.value)} placeholder="SRD Team" />
           </Card>
-          <Button type="submit" className="w-full" size="lg" loading={save.isPending}>
+          <Button form="course-form" type="submit" className="w-full" size="lg" loading={save.isPending}>
             <Save className="h-4 w-4" /> {isNew ? "Create course" : "Save changes"}
           </Button>
         </div>
       </form>
+
+      {/* Sticky Bottom Save Bar - Always visible regardless of screen size or scroll position */}
+      <div className="sticky bottom-4 z-20 mt-8 flex items-center justify-between gap-3 rounded-xl border border-zinc-200/90 bg-white/95 p-3.5 shadow-lg backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/95">
+        <div className="min-w-0 flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <span className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${form.title?.trim() ? "bg-emerald-500" : "bg-amber-500"}`} />
+          <span className="truncate font-medium text-zinc-800 dark:text-zinc-200">
+            {form.title?.trim() || (isNew ? "New Course" : "Untitled")}
+          </span>
+          <span className="hidden text-xs text-zinc-400 sm:inline">
+            ({form.status === "published" ? "Published" : "Draft"})
+          </span>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/admin/courses")}
+          >
+            Cancel
+          </Button>
+          <Button
+            form="course-form"
+            type="submit"
+            size="sm"
+            loading={save.isPending}
+            className="shadow-sm"
+          >
+            <Save className="h-4 w-4" /> {isNew ? "Create course" : "Save changes"}
+          </Button>
+        </div>
+      </div>
 
       {!isNew && course && (
         <div className="mt-10">

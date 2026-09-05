@@ -39,53 +39,53 @@ export function useSettings() {
   return useQuery<SiteSettings>({
     queryKey: qk.settings,
     queryFn: settingsApi.get,
-    staleTime: 5 * 60_000,
+    staleTime: 30_000,
     placeholderData: DEFAULT_SETTINGS,
   });
 }
 
 export function useCategories() {
-  return useQuery({ queryKey: qk.categories, queryFn: categoriesApi.list });
+  return useQuery({ queryKey: qk.categories, queryFn: categoriesApi.list, staleTime: 30_000 });
 }
 
 export function useCourses(includeDrafts = false) {
-  return useQuery({ queryKey: qk.courses(includeDrafts), queryFn: () => coursesApi.list({ includeDrafts }) });
+  return useQuery({ queryKey: qk.courses(includeDrafts), queryFn: () => coursesApi.list({ includeDrafts }), staleTime: 15_000 });
 }
 
 export function useCourse(slug: string | undefined) {
-  return useQuery({ queryKey: qk.course(slug ?? ""), queryFn: () => coursesApi.getBySlug(slug ?? ""), enabled: !!slug });
+  return useQuery({ queryKey: qk.course(slug ?? ""), queryFn: () => coursesApi.getBySlug(slug ?? ""), enabled: !!slug, staleTime: 30_000 });
 }
 
 export function useCourseById(id: string | undefined) {
-  return useQuery({ queryKey: qk.courseById(id ?? ""), queryFn: () => coursesApi.getById(id ?? ""), enabled: !!id && id !== "new" });
+  return useQuery({ queryKey: qk.courseById(id ?? ""), queryFn: () => coursesApi.getById(id ?? ""), enabled: !!id && id !== "new", staleTime: 60_000 });
 }
 
 export function useCourseContent(courseId: string | undefined) {
-  return useQuery({ queryKey: qk.content(courseId ?? ""), queryFn: () => coursesApi.content(courseId ?? ""), enabled: !!courseId });
+  return useQuery({ queryKey: qk.content(courseId ?? ""), queryFn: () => coursesApi.content(courseId ?? ""), enabled: !!courseId, staleTime: 15_000 });
 }
 
 export function usePages() {
-  return useQuery({ queryKey: qk.pages, queryFn: pagesApi.list });
+  return useQuery({ queryKey: qk.pages, queryFn: pagesApi.list, staleTime: 30_000 });
 }
 
 export function usePage(slug: string | undefined) {
-  return useQuery({ queryKey: qk.page(slug ?? ""), queryFn: () => pagesApi.get(slug ?? ""), enabled: !!slug });
+  return useQuery({ queryKey: qk.page(slug ?? ""), queryFn: () => pagesApi.get(slug ?? ""), enabled: !!slug, staleTime: 30_000 });
 }
 
 export function useUsers() {
-  return useQuery({ queryKey: qk.users, queryFn: usersApi.list });
+  return useQuery({ queryKey: qk.users, queryFn: usersApi.list, staleTime: 30_000 });
 }
 
 export function useMedia() {
-  return useQuery({ queryKey: qk.media, queryFn: mediaApi.list });
+  return useQuery({ queryKey: qk.media, queryFn: mediaApi.list, staleTime: 30_000 });
 }
 
 export function useLogs() {
-  return useQuery({ queryKey: qk.logs, queryFn: () => logsApi.list(150) });
+  return useQuery({ queryKey: qk.logs, queryFn: () => logsApi.list(150), staleTime: 10_000 });
 }
 
 export function useStats() {
-  return useQuery({ queryKey: qk.stats, queryFn: statsApi.get });
+  return useQuery({ queryKey: qk.stats, queryFn: statsApi.get, staleTime: 15_000 });
 }
 
 /** Generic mutation helper that invalidates the given query keys on success. */
@@ -94,13 +94,46 @@ export function useMutate<TArgs, TResult>(fn: (args: TArgs) => Promise<TResult>,
   return useMutation({
     mutationFn: fn,
     onSuccess: async () => {
-      await Promise.all([...invalidate, qk.stats, qk.logs].map((key) => qc.invalidateQueries({ queryKey: key })));
+      await Promise.all(
+        [...invalidate, qk.stats, qk.logs].map((key) =>
+          qc.invalidateQueries({ queryKey: key, refetchType: "all" })
+        )
+      );
     },
   });
 }
 
 export function useSaveSettings<K extends SettingsSection>(section: K) {
-  return useMutate((value: SiteSettings[K]) => settingsApi.save(section, value), [qk.settings]);
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (value: SiteSettings[K]) => {
+      await settingsApi.save(section, value);
+      return value;
+    },
+    onMutate: async (newValue) => {
+      await qc.cancelQueries({ queryKey: qk.settings });
+      const previous = qc.getQueryData<SiteSettings>(qk.settings);
+      if (previous) {
+        qc.setQueryData<SiteSettings>(qk.settings, {
+          ...previous,
+          [section]: newValue,
+        });
+      }
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        qc.setQueryData(qk.settings, context.previous);
+      }
+    },
+    onSettled: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: qk.settings, refetchType: "all" }),
+        qc.invalidateQueries({ queryKey: qk.stats, refetchType: "all" }),
+        qc.invalidateQueries({ queryKey: qk.logs, refetchType: "all" }),
+      ]);
+    },
+  });
 }
 
 const contentKeys = (courseId: string) => [qk.content(courseId), ["courses"], ["course"]];
@@ -160,3 +193,4 @@ export const mutations = {
   useClearLogs: () => useMutate(logsApi.clear, [qk.logs]),
   useImportBackup: () => useMutate(backupApi.importAll, [qk.settings, qk.categories, ["courses"], ["course"], ["course-content"], qk.pages, ["page"], qk.media, qk.users]),
 };
+
