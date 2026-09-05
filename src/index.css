@@ -37,31 +37,68 @@
   --animate-slide-in-left: slide-in-left 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-slide-in-right: slide-in-right 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-glow-pulse: glow-pulse 6s ease-in-out infinite;
+  --animate-liquid-1: liquid-blob-1 12s ease-in-out infinite;
+  --animate-liquid-2: liquid-blob-2 15s ease-in-out infinite;
+  --animate-liquid-3: liquid-blob-3 10s ease-in-out infinite;
+}
 
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+/* ─── Global Top-Level Keyframe Animations ─── */
+@keyframes liquid-blob-1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
   }
-  @keyframes fade-in-up {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  33% {
+    transform: translate(45px, -35px) scale(1.18) rotate(12deg);
   }
-  @keyframes slide-up {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
+  66% {
+    transform: translate(-35px, 30px) scale(0.92) rotate(-8deg);
   }
-  @keyframes slide-in-left {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
+}
+
+@keyframes liquid-blob-2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
   }
-  @keyframes slide-in-right {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
+  33% {
+    transform: translate(-40px, 45px) scale(1.15) rotate(-15deg);
   }
-  @keyframes glow-pulse {
-    0%, 100% { opacity: 0.55; transform: translateX(-50%) scale(1); }
-    50% { opacity: 0.9; transform: translateX(-50%) scale(1.08); }
+  66% {
+    transform: translate(35px, -30px) scale(0.94) rotate(10deg);
   }
+}
+
+@keyframes liquid-blob-3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(30px, 35px) scale(1.22);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.55; transform: translateX(-50%) scale(1); }
+  50% { opacity: 0.9; transform: translateX(-50%) scale(1.08); }
 }
 
 @layer base {
@@ -187,4 +224,112 @@ header .header-zoom-text:hover {
   transform: scale(0.92);
   text-shadow: 0 0 12px color-mix(in oklab, var(--primary) 65%, transparent);
 }
+
+/* ─── Liquid glass card styling ─── */
+.liquid-glass-card {
+  position: relative;
+  backdrop-filter: blur(32px) saturate(220%) brightness(106%);
+  -webkit-backdrop-filter: blur(32px) saturate(220%) brightness(106%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.38) 50%,
+    rgba(255, 255, 255, 0.62) 100%
+  );
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 20px 45px -12px rgba(15, 23, 42, 0.12),
+    0 8px 20px -6px rgba(15, 23, 42, 0.06),
+    inset 0 2px 2px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1.5px 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+.dark .liquid-glass-card {
+  backdrop-filter: blur(32px) saturate(200%) brightness(95%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%) brightness(95%);
+  background: linear-gradient(
+    135deg,
+    rgba(18, 18, 26, 0.72) 0%,
+    rgba(10, 10, 16, 0.55) 100%
+  );
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 30px 70px -15px rgba(0, 0, 0, 0.85),
+    0 10px 30px -8px rgba(0, 0, 0, 0.6),
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Fluid Liquid Blobs */
+.liquid-blob-anim-1 {
+  animation: liquid-blob-1 12s ease-in-out infinite;
+  will-change: transform;
+}
+.liquid-blob-anim-2 {
+  animation: liquid-blob-2 15s ease-in-out infinite;
+  will-change: transform;
+}
+.liquid-blob-anim-3 {
+  animation: liquid-blob-3 10s ease-in-out infinite;
+  will-change: transform;
+}
+
+.liquid-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.20) 50%,
+    transparent 100%
+  );
+  animation: liquid-shimmer 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes liquid-shimmer {
+  0% { transform: translateX(-120%) rotate(25deg); }
+  50%, 100% { transform: translateX(250%) rotate(25deg); }
+}
+
+/* Glass form controls inside liquid glass card */
+.liquid-glass-card input {
+  background-color: rgba(255, 255, 255, 0.68) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+  color: #18181b !important;
+}
+.liquid-glass-card input:focus {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent) !important;
+}
+
+.dark .liquid-glass-card input {
+  background-color: rgba(14, 14, 20, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+  color: #f4f4f5 !important;
+}
+.dark .liquid-glass-card input:focus {
+  background-color: rgba(20, 20, 28, 0.85) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 35%, transparent) !important;
+}
+
+.liquid-glass-card [role="tablist"] {
+  background-color: rgba(244, 245, 250, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+.dark .liquid-glass-card [role="tablist"] {
+  background-color: rgba(18, 18, 24, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+
 

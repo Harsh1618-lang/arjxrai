@@ -243,13 +243,54 @@ export default function Auth({ mode }: { mode: "login" | "register" }) {
 
 function Shell({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return (
-    <div className="mx-auto flex min-h-[80vh] max-w-md flex-col justify-center px-4 py-12">
-      <div className="mb-8 flex flex-col items-center text-center">
+    <div className="relative mx-auto flex min-h-[84vh] w-full max-w-md flex-col justify-center px-4 py-10">
+      <div className="mb-6 flex flex-col items-center text-center">
         <Logo compact />
-        <h1 className="mt-5 text-2xl font-bold tracking-tight">{title}</h1>
-        <p className="mt-1.5 text-sm text-zinc-500">{subtitle}</p>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white header-zoom-text">{title}</h1>
+        <p className="mt-1.5 text-sm text-zinc-500 dark:text-zinc-400">{subtitle}</p>
       </div>
-      <div className="rounded-[calc(var(--radius)+8px)] border border-zinc-200/80 bg-white p-6 shadow-lg shadow-zinc-200/40 dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-black/30 sm:p-8">{children}</div>
+
+      {/* Frosted Liquid Glass Card with High Blur & Specular Sheen (Glow strictly contained inside) */}
+      <div className="liquid-glass-card relative overflow-hidden rounded-[26px] p-6 shadow-2xl sm:p-8 animate-fade-in-up">
+        {/* Dynamic liquid blobs & glow contained EXCLUSIVELY INSIDE the card */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[26px]" aria-hidden>
+          {/* Ambient soft iridescent wash inside card */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-100/40 via-purple-50/30 to-sky-100/35 opacity-100 dark:opacity-0" />
+
+          {/* Liquid Blob 1: Vibrant Indigo & Violet aura inside card */}
+          <div
+            className="liquid-blob-anim-1 absolute -top-12 -left-12 h-60 w-60 rounded-full bg-gradient-to-tr from-indigo-500/45 via-violet-500/35 to-purple-600/25 blur-[40px] dark:from-indigo-600/35 dark:via-violet-600/25 dark:to-purple-700/20"
+          />
+          {/* Liquid Blob 2: Cyan & Sky aura inside card */}
+          <div
+            className="liquid-blob-anim-2 absolute -bottom-12 -right-12 h-64 w-64 rounded-full bg-gradient-to-br from-cyan-400/45 via-sky-500/35 to-blue-600/25 blur-[45px] dark:from-sky-500/35 dark:via-blue-600/25 dark:to-teal-500/20"
+          />
+          {/* Liquid Blob 3: Warm fuchsia & pink glowing accent inside card */}
+          <div
+            className="liquid-blob-anim-3 absolute top-1/4 -right-10 h-52 w-52 rounded-full bg-gradient-to-r from-fuchsia-500/35 via-pink-500/30 to-rose-400/20 blur-[40px] dark:from-fuchsia-600/25 dark:to-rose-600/20"
+          />
+          {/* Liquid Blob 4: Soft emerald/teal core shimmer inside card */}
+          <div
+            className="liquid-blob-anim-1 absolute -bottom-8 left-1/4 h-48 w-48 rounded-full bg-gradient-to-r from-emerald-400/30 via-teal-400/25 to-sky-400/25 blur-[35px] dark:from-emerald-600/20 dark:to-teal-600/15"
+            style={{ animationDelay: "-6s" }}
+          />
+        </div>
+
+        {/* Specular gloss top light reflection */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/95 dark:via-white/40 to-transparent" />
+
+        {/* Internal refractive liquid highlight */}
+        <div className="pointer-events-none absolute -top-24 -left-24 h-48 w-48 rounded-full bg-gradient-to-br from-white/60 to-transparent blur-2xl dark:from-white/10" />
+
+        {/* Ambient liquid corner glow */}
+        <div className="pointer-events-none absolute -bottom-20 -right-20 h-44 w-44 rounded-full bg-primary/15 blur-2xl dark:bg-primary/20" />
+
+        {/* Shimmer sweep effect */}
+        <div className="pointer-events-none absolute -inset-full liquid-shimmer opacity-40 dark:opacity-20" />
+
+        {/* Card interactive content */}
+        <div className="relative z-10">{children}</div>
+      </div>
     </div>
   );
 }

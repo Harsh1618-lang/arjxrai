@@ -336,13 +336,27 @@ export function Navbar() {
               </div>
             ) : (
               <div className="flex shrink-0 gap-2 border-t border-zinc-100 p-3 dark:border-[#1a1a1a]">
-                <LinkButton to="/login" variant="outline" size="md" className="flex-1" onClick={() => setOpen(false)}>
+                <Link
+                  to="/login"
+                  onClick={() => {
+                    setOpen(false);
+                    setMenuOpen(false);
+                  }}
+                  className="flex-1 inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white/70 px-3 py-2.5 text-sm font-medium text-zinc-800 transition hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                >
                   <span className="header-zoom-text">Log in</span>
-                </LinkButton>
+                </Link>
                 {settings?.general.registration_enabled && (
-                  <LinkButton to="/register" size="md" className="flex-1" onClick={() => setOpen(false)}>
+                  <Link
+                    to="/register"
+                    onClick={() => {
+                      setOpen(false);
+                      setMenuOpen(false);
+                    }}
+                    className="flex-1 inline-flex items-center justify-center rounded-xl bg-primary px-3 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
+                  >
                     <span className="header-zoom-text">Get started</span>
-                  </LinkButton>
+                  </Link>
                 )}
               </div>
             )}
