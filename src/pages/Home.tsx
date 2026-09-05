@@ -60,13 +60,13 @@ export default function Home() {
             </p>
 
             {/* Search */}
-            <form onSubmit={onSearch} className="mt-8 flex max-w-md items-center gap-0 overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-[#1f1f1f] dark:bg-[#0a0a0a]" role="search">
-              <Search className="ml-4 h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-600" />
+            <form onSubmit={onSearch} className="liquid-glass-bar mt-8 flex max-w-md items-center gap-0 overflow-hidden rounded-xl" role="search">
+              <Search className="ml-4 h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search courses, topics, tags…"
-                className="h-11 w-full bg-transparent px-3 text-sm outline-none placeholder:text-zinc-400 dark:text-white dark:placeholder:text-zinc-700"
+                className="h-11 w-full bg-transparent px-3 text-sm outline-none placeholder:text-zinc-400 dark:text-white dark:placeholder:text-zinc-500"
                 aria-label="Search courses"
               />
               <button type="submit" className="mr-1.5 h-8 shrink-0 rounded-lg bg-primary px-4 text-xs font-semibold text-white transition hover:bg-primary-hover">
@@ -88,7 +88,7 @@ export default function Home() {
             </div>
 
             {/* Stats */}
-            <dl className="mt-10 flex gap-8 border-t border-zinc-100 pt-8 dark:border-[#141414]">
+            <dl className="mt-10 flex gap-8 border-t border-black/5 pt-8 dark:border-white/10">
               {[
                 { icon: BookOpen, label: "Courses", value: stats?.published ?? courses.length },
                 { icon: Video, label: "Lessons", value: stats?.videos ?? 0 },
@@ -96,7 +96,7 @@ export default function Home() {
               ].map((s) => (
                 <div key={s.label}>
                   <dd className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">{s.value}+</dd>
-                  <dt className="mt-0.5 flex items-center gap-1 text-[12px] text-zinc-400 dark:text-zinc-600">
+                  <dt className="mt-0.5 flex items-center gap-1 text-[12px] text-zinc-500 dark:text-zinc-400">
                     <s.icon className="h-3 w-3" /> {s.label}
                   </dt>
                 </div>
@@ -115,13 +115,13 @@ export default function Home() {
                 fetchPriority="high"
               />
               {/* Free badge */}
-              <div className="absolute -bottom-5 -left-5 flex items-center gap-3 rounded-2xl border border-zinc-200/80 bg-white/95 px-4 py-3 shadow-xl backdrop-blur dark:border-[#1f1f1f] dark:bg-[#0d0d0d]">
+              <div className="liquid-course-card absolute -bottom-5 -left-5 flex items-center gap-3 rounded-2xl px-4 py-3 shadow-xl">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10">
                   <Users className="h-4 w-4 text-emerald-500" />
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-zinc-900 dark:text-white">100% Free</p>
-                  <p className="text-[11px] text-zinc-400 dark:text-zinc-600">No paywalls, ever</p>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400">No paywalls, ever</p>
                 </div>
               </div>
             </div>
@@ -146,7 +146,7 @@ export default function Home() {
               <Link
                 key={cat.id}
                 to={`/courses?category=${cat.slug}`}
-                className="group flex flex-col items-start gap-3 rounded-2xl border border-zinc-200/70 bg-white p-4 transition-all duration-150 hover:border-zinc-300 dark:border-[#1a1a1a] dark:bg-[#0a0a0a] dark:hover:border-[#2a2a2a]"
+                className="liquid-course-card group flex flex-col items-start gap-3 rounded-2xl p-4"
               >
                 <span
                   className="flex h-9 w-9 items-center justify-center rounded-xl text-base"
@@ -156,7 +156,7 @@ export default function Home() {
                 </span>
                 <span>
                   <span className="block text-[13px] font-semibold text-zinc-800 group-hover:text-primary dark:text-zinc-200">{cat.name}</span>
-                  <span className="text-[11px] text-zinc-400 dark:text-zinc-600">{countByCat[cat.id] ?? 0} courses</span>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{countByCat[cat.id] ?? 0} courses</span>
                 </span>
               </Link>
             ))}
@@ -176,9 +176,9 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── Latest — full-width tinted band ── */}
+      {/* ── Latest — full-width transparent band ── */}
       {home.show_latest && (latest.length > 0 || isLoading) && (
-        <section className="border-y border-zinc-100 bg-zinc-50/60 py-14 dark:border-[#111111] dark:bg-[#050505]">
+        <section className="border-y border-black/5 bg-white/20 py-14 backdrop-blur-xs dark:border-white/5 dark:bg-black/15">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionTitle
               title="Latest courses"
@@ -203,19 +203,19 @@ export default function Home() {
               <Link
                 key={c.id}
                 to={`/courses/${c.slug}`}
-                className="group flex items-center gap-4 rounded-2xl border border-zinc-200/70 bg-white p-3.5 transition-all duration-150 hover:border-zinc-300 dark:border-[#1a1a1a] dark:bg-[#0a0a0a] dark:hover:border-[#2a2a2a]"
+                className="liquid-course-card group flex items-center gap-4 rounded-2xl p-3.5"
               >
-                <span className="w-5 shrink-0 text-center text-sm font-bold tabular-nums text-zinc-300 dark:text-zinc-800">{i + 1}</span>
+                <span className="w-5 shrink-0 text-center text-sm font-bold tabular-nums text-zinc-400 dark:text-zinc-600">{i + 1}</span>
                 {c.thumbnail && (
                   <img src={c.thumbnail} alt="" loading="lazy" className="h-14 w-20 shrink-0 rounded-xl object-cover" />
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[14px] font-semibold text-zinc-900 transition-colors group-hover:text-primary dark:text-zinc-100">{c.title}</p>
-                  <p className="mt-0.5 text-[12px] text-zinc-400 dark:text-zinc-700">
+                  <p className="mt-0.5 text-[12px] text-zinc-500 dark:text-zinc-400">
                     {c.category?.name && `${c.category.name} · `}{c.lesson_count} lessons · {c.views.toLocaleString()} views
                   </p>
                 </div>
-                <ArrowRight className="h-4 w-4 shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-primary dark:text-zinc-700" />
+                <ArrowRight className="h-4 w-4 shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-primary dark:text-zinc-500" />
               </Link>
             ))}
           </div>
@@ -224,20 +224,20 @@ export default function Home() {
 
       {/* ── Testimonials ── */}
       {home.show_testimonials && home.testimonials.length > 0 && (
-        <section className="border-y border-zinc-100 bg-zinc-50/60 py-14 dark:border-[#111111] dark:bg-[#050505]">
+        <section className="border-y border-black/5 bg-white/20 py-14 backdrop-blur-xs dark:border-white/5 dark:bg-black/15">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionTitle title="Loved by learners" subtitle="Real feedback from our community." />
             <div className="grid gap-4 md:grid-cols-3">
               {home.testimonials.map((t, i) => (
                 <figure
                   key={i}
-                  className="rounded-2xl border border-zinc-200/70 bg-white p-6 dark:border-[#1a1a1a] dark:bg-[#0a0a0a]"
+                  className="liquid-course-card rounded-2xl p-6"
                 >
                   <Quote className="h-5 w-5 text-primary/30" />
-                  <blockquote className="mt-3 text-[13.5px] leading-relaxed text-zinc-600 dark:text-zinc-500">"{t.text}"</blockquote>
+                  <blockquote className="mt-3 text-[13.5px] leading-relaxed text-zinc-600 dark:text-zinc-300">"{t.text}"</blockquote>
                   <figcaption className="mt-4 text-[13px]">
                     <span className="font-semibold text-zinc-900 dark:text-zinc-200">{t.name}</span>
-                    <span className="text-zinc-400"> · {t.role}</span>
+                    <span className="text-zinc-500 dark:text-zinc-400"> · {t.role}</span>
                   </figcaption>
                 </figure>
               ))}
@@ -248,22 +248,58 @@ export default function Home() {
 
       {/* ── CTA ── */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-2xl bg-primary px-8 py-14 text-center">
-          {/* Subtle inner glow — the one decoration */}
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-1/2 left-1/2 h-full w-2/3 -translate-x-1/2 rounded-full bg-white/10 blur-3xl" />
+        <div className="liquid-glass-bar relative overflow-hidden rounded-3xl border border-white/80 p-8 sm:p-12 md:py-16 text-center shadow-xl dark:border-white/10">
+          {/* Dynamic liquid blobs & glow contained EXCLUSIVELY INSIDE CTA */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl" aria-hidden>
+            {/* Ambient soft iridescent wash */}
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-100/35 via-purple-50/25 to-sky-100/30 opacity-100 dark:opacity-0" />
+
+            {/* Liquid Blob 1: Left */}
+            <div
+              className="liquid-blob-anim-1 absolute -top-12 -left-12 h-64 w-64 rounded-full bg-gradient-to-r from-indigo-500/35 via-violet-500/25 to-purple-500/20 blur-[40px] dark:from-indigo-600/30 dark:via-violet-600/20 dark:to-purple-700/15"
+            />
+            {/* Liquid Blob 2: Right */}
+            <div
+              className="liquid-blob-anim-2 absolute -bottom-12 -right-12 h-72 w-72 rounded-full bg-gradient-to-r from-cyan-400/35 via-sky-500/25 to-blue-500/20 blur-[45px] dark:from-sky-500/30 dark:via-blue-600/20 dark:to-teal-500/15"
+            />
+            {/* Liquid Blob 3: Center */}
+            <div
+              className="liquid-blob-anim-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-48 w-64 rounded-full bg-gradient-to-r from-fuchsia-500/25 to-pink-500/20 blur-[36px] dark:from-fuchsia-600/20 dark:to-pink-600/15"
+            />
           </div>
-          <h2 className="relative text-2xl font-bold tracking-tight text-white sm:text-3xl">Start learning today</h2>
-          <p className="relative mx-auto mt-3 max-w-md text-[14px] text-white/70">
-            Free account. Every course, every PDF, every lesson — no paywall.
-          </p>
-          <div className="relative mt-7 flex flex-wrap justify-center gap-3">
-            <LinkButton to={general.registration_enabled ? "/register" : "/login"} size="md" variant="secondary" className="bg-white text-zinc-900 hover:bg-zinc-100">
-              {general.registration_enabled ? "Create free account" : "Log in"}
-            </LinkButton>
-            <LinkButton to="/courses" size="md" variant="ghost" className="text-white/80 hover:bg-white/10 hover:text-white">
-              Browse courses
-            </LinkButton>
+
+          {/* Top specular reflection line */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/95 dark:via-white/35 to-transparent" />
+
+          {/* Shimmer sweep effect */}
+          <div className="pointer-events-none absolute -inset-full liquid-shimmer opacity-35 dark:opacity-15" />
+
+          {/* Content */}
+          <div className="relative z-10 mx-auto max-w-2xl">
+            <h2 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl lg:text-4xl dark:text-white">
+              Start learning today
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-[15px]">
+              Free account. Every course, every PDF, every lesson — no paywall.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <LinkButton
+                to={general.registration_enabled ? "/register" : "/login"}
+                size="md"
+                variant="primary"
+                className="shadow-lg shadow-indigo-500/25"
+              >
+                {general.registration_enabled ? "Create free account" : "Log in"}
+              </LinkButton>
+              <LinkButton
+                to="/courses"
+                size="md"
+                variant="outline"
+                className="border-white/80 bg-white/70 shadow-xs backdrop-blur-md hover:bg-white/90 dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+              >
+                Browse courses
+              </LinkButton>
+            </div>
           </div>
         </div>
       </section>

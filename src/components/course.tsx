@@ -32,15 +32,15 @@ export function CourseCard({ course, className }: { course: CourseWithMeta; clas
     <Link
       to={`/courses/${course.slug}`}
       className={cn(
-        "group flex flex-col overflow-hidden rounded-2xl border border-zinc-200/70 bg-white transition-all duration-200",
-        "hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-200/40",
-        "dark:border-[#1a1a1a] dark:bg-[#0a0a0a]",
-        "dark:hover:border-[#2a2a2a] dark:hover:shadow-none",
+        "liquid-course-card group flex flex-col overflow-hidden rounded-2xl",
         className,
       )}
     >
+      {/* Top specular reflection line */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[1.2px] bg-gradient-to-r from-transparent via-white/90 dark:via-white/25 to-transparent" />
+
       {/* Thumbnail */}
-      <div className="relative aspect-[16/9] overflow-hidden bg-zinc-100 dark:bg-[#111111]">
+      <div className="relative aspect-[16/9] overflow-hidden bg-zinc-100/50 dark:bg-black/30">
         {course.thumbnail ? (
           <img
             src={course.thumbnail}
@@ -51,7 +51,7 @@ export function CourseCard({ course, className }: { course: CourseWithMeta; clas
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Video className="h-8 w-8 text-zinc-300 dark:text-zinc-700" />
+            <Video className="h-8 w-8 text-zinc-400 dark:text-zinc-600" />
           </div>
         )}
         {course.is_featured && (
@@ -76,12 +76,12 @@ export function CourseCard({ course, className }: { course: CourseWithMeta; clas
         <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-zinc-900 transition-colors group-hover:text-primary dark:text-white">
           {course.title}
         </h3>
-        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-600">
+        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-zinc-600 dark:text-zinc-400">
           {course.short_description}
         </p>
 
         {/* Footer */}
-        <div className="mt-auto flex items-center justify-between border-t border-zinc-100 pt-3 text-[12px] text-zinc-400 dark:border-[#151515] dark:text-zinc-700" style={{ marginTop: "1rem" }}>
+        <div className="mt-auto flex items-center justify-between border-t border-black/5 pt-3 text-[12px] text-zinc-500 dark:border-white/10 dark:text-zinc-400" style={{ marginTop: "1rem" }}>
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1">
               <PlayCircle className="h-3 w-3" /> {pluralize(course.lesson_count, "lesson")}
@@ -99,13 +99,13 @@ export function CourseCard({ course, className }: { course: CourseWithMeta; clas
 
 export function CourseCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-200/70 dark:border-[#1a1a1a]">
-      <Skeleton className="aspect-[16/9] rounded-none" />
+    <div className="liquid-course-card overflow-hidden rounded-2xl">
+      <Skeleton className="aspect-[16/9] rounded-none opacity-50" />
       <div className="space-y-3 p-4">
-        <Skeleton className="h-3 w-16" />
-        <Skeleton className="h-4 w-4/5" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-3 w-2/3" />
+        <Skeleton className="h-3 w-16 opacity-70" />
+        <Skeleton className="h-4 w-4/5 opacity-70" />
+        <Skeleton className="h-4 w-full opacity-70" />
+        <Skeleton className="h-3 w-2/3 opacity-70" />
       </div>
     </div>
   );

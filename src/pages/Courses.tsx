@@ -72,7 +72,7 @@ export default function Courses() {
             value={q}
             onChange={(e) => update({ q: e.target.value })}
             placeholder="Search courses…"
-            className="h-11 w-full rounded-[var(--radius)] border border-zinc-200 bg-white pl-10 pr-10 text-sm shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-zinc-700 dark:bg-zinc-900"
+            className="h-11 w-full rounded-[var(--radius)] border border-white/80 bg-white/60 pl-10 pr-10 text-sm shadow-xs outline-none backdrop-blur-md transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-white/10 dark:bg-white/5 dark:text-white"
             aria-label="Search courses"
           />
           {q && (
@@ -86,7 +86,7 @@ export default function Courses() {
           <select
             value={sort}
             onChange={(e) => update({ sort: e.target.value })}
-            className="h-11 rounded-[var(--radius)] border border-zinc-200 bg-white px-3 text-sm outline-none dark:border-zinc-700 dark:bg-zinc-900"
+            className="h-11 rounded-[var(--radius)] border border-white/80 bg-white/60 px-3 text-sm outline-none backdrop-blur-md dark:border-white/10 dark:bg-zinc-900/80 dark:text-white"
             aria-label="Sort courses"
           >
             <option value="latest">Latest</option>

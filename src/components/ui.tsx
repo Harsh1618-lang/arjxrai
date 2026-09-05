@@ -181,12 +181,14 @@ export function Toggle({ checked, onChange, label, hint, disabled }: ToggleProps
 
 /* ──────────────────────────── Layout ──────────────────────────── */
 
-export function Card({ className, children, onClick }: { className?: string; children: ReactNode; onClick?: () => void }) {
+export function Card({ className, children, onClick, glass = true }: { className?: string; children: ReactNode; onClick?: () => void; glass?: boolean }) {
   return (
     <div
       onClick={onClick}
       className={cn(
-        "rounded-[calc(var(--radius)+4px)] border border-zinc-200/80 bg-white dark:border-[#1a1a1a] dark:bg-[#0a0a0a]",
+        glass
+          ? "liquid-course-card rounded-[calc(var(--radius)+4px)]"
+          : "rounded-[calc(var(--radius)+4px)] border border-zinc-200/80 bg-white dark:border-[#1a1a1a] dark:bg-[#0a0a0a]",
         className,
       )}
     >

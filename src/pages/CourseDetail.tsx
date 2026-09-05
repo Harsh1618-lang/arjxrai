@@ -169,7 +169,7 @@ export default function CourseDetail() {
 
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-[calc(var(--radius)+6px)] border border-zinc-200/80 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="liquid-course-card rounded-[calc(var(--radius)+6px)] p-4 shadow-sm">
               {user && lessons.length > 0 && (
                 <div className="mb-3">
                   <div className="mb-1 flex items-center justify-between text-xs">
@@ -193,7 +193,7 @@ export default function CourseDetail() {
                 ]}
               />
               {!isAuthenticated && (
-                <div className="mt-3 flex items-start gap-2 rounded-lg bg-primary/5 p-3 text-xs text-zinc-600 dark:text-zinc-300">
+                <div className="mt-3 flex items-start gap-2 rounded-lg bg-primary/10 p-3 text-xs text-zinc-700 dark:text-zinc-200">
                   <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
                   <span>
                     <Link to="/login" className="font-semibold text-primary hover:underline">Log in</Link> to watch videos and download files. It's free.
@@ -215,7 +215,7 @@ export default function CourseDetail() {
                         }}
                         className={cn(
                           "flex w-full items-start gap-3 rounded-lg p-2.5 text-left transition",
-                          activeLesson?.id === l.id ? "bg-primary/10 ring-1 ring-primary/30" : "hover:bg-zinc-50 dark:hover:bg-zinc-800",
+                          activeLesson?.id === l.id ? "bg-primary/15 ring-1 ring-primary/30" : "hover:bg-white/40 dark:hover:bg-white/5",
                         )}
                       >
                         <span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-semibold", activeLesson?.id === l.id ? "bg-primary text-white" : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300")}>{i + 1}</span>
@@ -251,7 +251,7 @@ export default function CourseDetail() {
             </div>
 
             {settings?.general.telegram_channel && (
-              <a href={settings.general.telegram_channel} target="_blank" rel="noopener noreferrer" className="mt-4 flex items-center gap-3 rounded-[calc(var(--radius)+6px)] border border-sky-200 bg-sky-50 p-4 text-sm transition hover:bg-sky-100 dark:border-sky-900 dark:bg-sky-950/40 dark:hover:bg-sky-950/60">
+              <a href={settings.general.telegram_channel} target="_blank" rel="noopener noreferrer" className="liquid-course-card mt-4 flex items-center gap-3 rounded-[calc(var(--radius)+6px)] p-4 text-sm">
                 <TelegramIcon className="h-6 w-6 text-sky-500" />
                 <span>
                   <span className="block font-semibold text-sky-900 dark:text-sky-100">Join our Telegram</span>
