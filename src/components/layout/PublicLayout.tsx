@@ -4,6 +4,7 @@ import { Construction, Megaphone, X } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Footer } from "@/components/layout/Footer";
+import { LiquidBackground } from "@/components/layout/LiquidBackground";
 import { CookieConsent } from "@/components/CookieConsent";
 import { InstallPrompt, OfflineBanner, ScrollToTop } from "@/components/common";
 import { PageLoader } from "@/components/ui";
@@ -69,7 +70,8 @@ export function PublicLayout() {
   const maintenance = settings?.general.maintenance_mode ?? false;
 
   return (
-    <div className="text-hover-fx flex min-h-screen flex-col bg-white text-zinc-900 dark:bg-black dark:text-zinc-100">
+    <div className="text-hover-fx relative flex min-h-screen flex-col bg-transparent text-zinc-900 dark:text-zinc-100">
+      <LiquidBackground />
       <ScrollToTop />
       <OfflineBanner />
       <AnnouncementBar />
