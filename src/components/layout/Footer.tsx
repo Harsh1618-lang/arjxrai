@@ -5,7 +5,6 @@ import { GithubIcon, TelegramIcon, YoutubeIcon } from "@/components/icons";
 import { useNewsletter, useSettings } from "@/hooks/queries";
 import { useToast } from "@/hooks/useToast";
 import { Logo } from "@/components/layout/Navbar";
-import { isDemoMode } from "@/services/adapter";
 import { isExternal, isValidEmail, safeUrl } from "@/lib/utils";
 
 export function Footer() {
@@ -164,10 +163,6 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-black/5 pt-6 text-[12px] text-zinc-500 dark:border-white/10 dark:text-zinc-400 sm:flex-row">
           <p>{(footer.copyright || `© {year} ${general.site_name}`).replace("{year}", String(year))}</p>
-          <p className="flex items-center gap-1.5">
-            <span className={`h-1.5 w-1.5 rounded-full ${isDemoMode ? "bg-amber-500" : "bg-emerald-500"}`} />
-            {isDemoMode ? "Demo mode" : "Production"}
-          </p>
         </div>
       </div>
     </footer>
