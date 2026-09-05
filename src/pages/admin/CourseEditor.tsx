@@ -175,38 +175,6 @@ export default function CourseEditor() {
         </div>
       </form>
 
-      {/* Sticky Bottom Save Bar - Always visible regardless of screen size or scroll position */}
-      <div className="sticky bottom-4 z-20 mt-8 flex items-center justify-between gap-3 rounded-xl border border-zinc-200/90 bg-white/95 p-3.5 shadow-lg backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/95">
-        <div className="min-w-0 flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-          <span className={`inline-block h-2.5 w-2.5 shrink-0 rounded-full ${form.title?.trim() ? "bg-emerald-500" : "bg-amber-500"}`} />
-          <span className="truncate font-medium text-zinc-800 dark:text-zinc-200">
-            {form.title?.trim() || (isNew ? "New Course" : "Untitled")}
-          </span>
-          <span className="hidden text-xs text-zinc-400 sm:inline">
-            ({form.status === "published" ? "Published" : "Draft"})
-          </span>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/admin/courses")}
-          >
-            Cancel
-          </Button>
-          <Button
-            form="course-form"
-            type="submit"
-            size="sm"
-            loading={save.isPending}
-            className="shadow-sm"
-          >
-            <Save className="h-4 w-4" /> {isNew ? "Create course" : "Save changes"}
-          </Button>
-        </div>
-      </div>
-
       {!isNew && course && (
         <div className="mt-10">
           <h2 className="mb-4 text-xl font-bold">Course content</h2>
